@@ -76,7 +76,7 @@ class ProyectoResource extends Resource
                                             'Atlántida' => 'Atlántida',
                                             'Colón' => 'Colón',
                                             'Comayagua' => 'Comayagua',
-                                            'Copán' => 'Copán Ruinas',
+                                            'Copán' => 'Copán Ruinas Prueba 2',
                                             'Cortés' => 'Cortés',
                                             'Choluteca' => 'Choluteca',
                                             'El Paraíso' => 'El Paraíso',
