@@ -11,27 +11,31 @@ class Estimaciones extends Model
 {
     use HasFactory;
 
-    protected $table = 'TBL_Estimaciones';
+    protected $table = 'TBL_Estimaciones'; //El nombre de la tabla ya creada
 
-    public $timestamps = false;
+    public $timestamps = false; // Esto siempre ira
+ 
+    protected $primaryKey = 'ID_Estimacion'; //Poner la PK
 
-    protected $primaryKey = 'ID_Estimacion';
-
+    //Funcion para relaciones.
     public function proyecto() //Relacion hacia proyecto
     {
         return $this->belongsTo(Proyecto::class, 'ID_Proyecto', 'Id_Proyecto');
     }
 
-    protected static function boot()
+
+    protected static function boot()  // Esto es para agregar el Creado por
     {
         parent::boot();
 
-        // Antes de crear un registro registrar el usuario
+        // Antes de crear un registro guardar  el usuario
         static::creating(function ($estimacion) {
             $estimacion->Creado_Por = Auth::user()->name;
         });
     }
 
+    //Esto son los datos que se van a ingresar
+    //Son todos los datos de la tabla solo que sin la PK
     protected $fillable = [
         'Estimacion',
         'Fecha_Estimacion',

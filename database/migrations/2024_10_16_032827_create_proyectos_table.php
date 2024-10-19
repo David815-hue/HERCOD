@@ -20,9 +20,9 @@ return new class extends Migration
             $table->string('Estado')->default('En progreso');
             $table->date('Fecha_FirmaContrato');
             $table->date('Fecha_OrdenInicio');
-            $table->decimal('Anticipo', 15, 2);
-            $table->decimal('Monto_Contractual', 15, 2);
-            $table->decimal('Monto_Final', 15, 2)->nullable();
+            $table->decimal('Anticipo', 30, 2);
+            $table->decimal('Monto_Contractual', 30, 2);
+            $table->decimal('Monto_Final', 30, 2)->nullable();
             $table->date('Fecha_Fin')->nullable();
             $table->string('Direccion');
             $table->date('Fecha_Creacion')->default(now());

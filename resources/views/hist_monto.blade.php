@@ -28,8 +28,8 @@
                 @foreach ($historialMontos as $historial)
                     <tr class="bg-white dark:bg-gray-900">
                         <td class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 text-center font-bold">{{ $historial->TipoMonto }}</td>
-                        <td class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 text-center">{{ $historial->Monto_Anterior }}</td>
-                        <td class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 text-center">{{ $historial->Monto_Nuevo }}</td>
+                        <td class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 text-center">L. {{ $historial->Monto_Anterior }}</td>
+                        <td class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 text-center">L. {{ $historial->Monto_Nuevo }}</td>
                         <td class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 text-center">{{ $historial->Fecha_Modificacion }}</td>
                         <td class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 text-center">{{ $historial->Modificado_Por }}</td>
                     </tr>

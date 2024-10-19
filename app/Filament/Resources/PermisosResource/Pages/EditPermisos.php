@@ -16,4 +16,6 @@ class EditPermisos extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    
 }

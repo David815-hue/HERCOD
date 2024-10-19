@@ -15,6 +15,7 @@
         "joaopaulolndev/filament-edit-profile": "^1.0",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
+        "pelmered/filament-money-field": "^1.4",
         "ryangjchandler/filament-progress-column": "^1.0",
         "swisnl/filament-backgrounds": "^1.1",
         "yebor974/filament-renew-password": "^2.0"

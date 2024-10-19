@@ -10,6 +10,11 @@ class HistMonto extends Model
 
     protected $table = 'TBL_Hist_Monto';
 
+    protected $primaryKey = 'ID_Historial'; //Poner la PK
+
+    public $timestamps = false; // Esto siempre ira
+
+
     protected $fillable = [
         'Monto_Anterior',
         'Monto_Nuevo',

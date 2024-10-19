@@ -22,7 +22,14 @@ use Filament\Tables\Columns\BadgeColumn;
 use Illuminate\Support\Facades\DB;
 use Filament\Infolists\Components\ViewEntry;
 use App\Models\Estimaciones; // Modelo de Estimaciones
+use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
+use Pelmered\FilamentMoneyField\Forms\Components\MoneyInput;
+use Pelmered\FilamentMoneyField\Infolists\Components\MoneyEntry;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\Filter;
+
+
 
 
 
@@ -55,14 +62,16 @@ class ProyectoResource extends Resource
                 ->label('Descripción')
                 ->required(),
 
-            Forms\Components\TextInput::make('Anticipo')
+            MoneyInput::make('Anticipo')
                 ->label('Anticipo')
-                ->numeric()
-                ->required(),
+                ->currency('HNL')
+                ->locale('es_HN')
+                ->required()
+                ->step(1000)
+                ->minValue(0)
+                ->decimals(2),
 
-            Forms\Components\TextInput::make('Estado')
-                ->label('Estado')
-                ->required(),
+            
 
             Forms\Components\DatePicker::make('Fecha_FirmaContrato')
                 ->label('Fecha Firma de Contrato')
@@ -72,14 +81,22 @@ class ProyectoResource extends Resource
                 ->label('Fecha Orden de Inicio')
                 ->required(),
 
-            Forms\Components\TextInput::make('Monto_Contractual')
+            MoneyInput::make('Monto_Contractual')
                 ->label('Monto Contractual')
-                ->numeric()
-                ->required(),
+                ->currency('HNL')
+                ->locale('es_HN')
+                ->required()
+                ->step(1000)
+                ->minValue(0)
+                ->decimals(2),
 
-            Forms\Components\TextInput::make('Monto_Final')
+            MoneyInput::make('Monto_Final')
                 ->label('Monto Final')
-                ->numeric()
+                ->currency('HNL')
+                ->locale('es_HN')
+                ->step(1000)
+                ->minValue(0)
+                ->decimals(2)
                 ->nullable(),
 
             Forms\Components\DatePicker::make('Fecha_Fin')
@@ -89,11 +106,6 @@ class ProyectoResource extends Resource
             Forms\Components\TextInput::make('Direccion')
                 ->label('Dirección')
                 ->required(),
-
-            Forms\Components\DatePicker::make('Fecha_Creacion')
-                ->label('Fecha de Creación')
-                ->default(now())
-                ->disabled(),
 
             Forms\Components\TextInput::make('ID_Empresa')
                 ->label('ID Empresa')
@@ -106,6 +118,11 @@ class ProyectoResource extends Resource
             Forms\Components\TextInput::make('Encargado')
                 ->label('Encargado')
                 ->required(),
+
+            Forms\Components\DatePicker::make('Fecha_Creacion')
+                ->label('Fecha de Creación')
+                ->default(now())
+                ->disabled(),
 
             Forms\Components\TextInput::make('Creado_Por')
                 ->disabled()
@@ -168,14 +185,18 @@ class ProyectoResource extends Resource
             Section::make('Montos')
             ->columns(3)
             ->schema([
-                TextEntry::make('Monto_Contractual')
-                ->label('Anticipo'),
-                TextEntry::make('Monto_Final')
-                ->label('Monto Contractual'),
-                TextEntry::make('ID_Departamento')
-                ->label('Monto Final'),
-                
-                
+                MoneyEntry::make('Anticipo')
+                ->label('Anticipo')
+                ->currency('HNL')
+                ->locale('es_HN'),
+                MoneyEntry::make('Monto_Contractual')
+                ->label('Monto Contractual')
+                ->currency('HNL')
+                ->locale('es_HN'),
+                MoneyEntry::make('Monto_Final')
+                ->label('Monto Final')
+                ->currency('HNL')
+                ->locale('es_HN'),
             ]),
 
             Section::make('Historial de Montos')
@@ -198,26 +219,41 @@ class ProyectoResource extends Resource
                     ->label('#')
                     ->toggleable()
                     ->sortable(),
+
                 TextColumn::make('NumeroContrato')
                     ->label('Numero Contrato')
+                    ->searchable()
                     ->toggleable()
                     ->sortable(),
                 TextColumn::make('Nombre_Proyecto')
                     ->toggleable()
+                    ->searchable()
                     ->label('Nombre del Proyecto')
                     ->sortable(),
+                
                 BadgeColumn::make('Estado')
                     ->colors([
                         'danger' => 'Cancelado',
                         'warning' => 'En Progreso',
+                        'success' => 'Completado'
                     ]),
                 TextColumn::make('Fecha_OrdenInicio')
                     ->toggleable()
                     ->label('Fecha Orden de Inicio')
                     ->date(),
+                TextColumn::make('Encargado')
+                    ->toggleable()
+                    ->searchable()
+                    ->label('Encargado')
+                    ->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('Estado')
+                    ->label('Estado')
+                    ->options([
+                        'En progreso' => 'En progreso',
+                        'Completado' => 'Completado',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -229,10 +265,14 @@ class ProyectoResource extends Resource
                         ->icon('heroicon-o-plus')
                         ->color('info')
                         ->form([
-                            Forms\Components\TextInput::make('monto')
+                            MoneyInput::make('monto')
                                 ->label('Monto')
+                                ->currency('HNL')
+                                ->locale('es_HN')
                                 ->required()
-                                ->numeric(),
+                                ->step(1000)
+                                ->minValue(0)
+                                ->decimals(2),
                             Forms\Components\DatePicker::make('fecha')
                                 ->label('Fecha')
                                 ->required(),
