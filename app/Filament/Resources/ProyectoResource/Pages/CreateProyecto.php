@@ -9,6 +9,4 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateProyecto extends CreateRecord
 {
     protected static string $resource = ProyectoResource::class;
-
-    
 }
