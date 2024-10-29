@@ -56,7 +56,6 @@ $departamentoTrabajo = DepartamentoTrabajo::create([
         'Fecha_Ingreso' => $data['Fecha_Ingreso'],
         'ID_Persona' => $persona->ID_Persona,
         'ID_Departamento_trabajo' => $departamentoTrabajo->ID_Departamento_trabajo,
-        'Creado_Por' => auth()->user()->Username,
     ]);
 
     
