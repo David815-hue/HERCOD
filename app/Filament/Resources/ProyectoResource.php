@@ -28,8 +28,7 @@ use Pelmered\FilamentMoneyField\Forms\Components\MoneyInput;
 use Pelmered\FilamentMoneyField\Infolists\Components\MoneyEntry;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\Filter;
-
-
+use Filament\Forms\Components\Hidden;
 
 
 
@@ -99,6 +98,15 @@ class ProyectoResource extends Resource
                 ->decimals(2)
                 ->nullable(),
 
+            Select::make('Estado')
+                ->label('Estado')
+                ->options([
+                    'Completado' => 'Completado',
+                    'En progreso' => 'En progreso',
+                ])
+            ->visible(fn ($record) => $record !== null) // Solo visible al editar
+            ->required(fn ($record) => $record !== null), // Requerido solo al editar
+
             Forms\Components\DatePicker::make('Fecha_Fin')
                 ->label('Fecha de Finalización')
                 ->nullable(),
@@ -119,6 +127,7 @@ class ProyectoResource extends Resource
                 ->label('Encargado')
                 ->required(),
 
+            
             Forms\Components\DatePicker::make('Fecha_Creacion')
                 ->label('Fecha de Creación')
                 ->default(now())
@@ -295,6 +304,9 @@ class ProyectoResource extends Resource
                             ->success() 
                             ->send();
                         }),
+
+                       
+            
                 ]),
             ])
             ->bulkActions([
@@ -320,4 +332,7 @@ class ProyectoResource extends Resource
             
         ];
     }
+
+
+    
 }

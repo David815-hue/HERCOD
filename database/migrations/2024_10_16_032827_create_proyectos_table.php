@@ -9,6 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+
     public function up(): void
     {
         Schema::create('TBL_Proyecto', function (Blueprint $table) {
@@ -32,7 +33,6 @@ return new class extends Migration
             $table->string('Creado_Por')->nullable();
             $table->string('Modificado_Por')->nullable();
             $table->date('Fecha_Modificacion')->nullable();
-
         });
     }
 
