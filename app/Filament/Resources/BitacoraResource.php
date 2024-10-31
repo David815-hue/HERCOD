@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\DatePicker;
 
-
 class BitacoraResource extends Resource
 {
     protected static ?string $model = Bitacora::class;

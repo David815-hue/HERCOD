@@ -58,6 +58,8 @@ class EditEmpleados extends EditRecord
                 throw new \Exception('El DNI ya ha sido registrado.'); 
             }
         }
+
+
         return $data;
     }
 
@@ -73,7 +75,6 @@ class EditEmpleados extends EditRecord
             'Cargo' => $data['Cargo'],
             'Sueldo' => $data['Sueldo'],
             'Fecha_Ingreso' => $data['Fecha_Ingreso'],
- 
         ]);
 
         return $record;
