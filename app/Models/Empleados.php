@@ -43,8 +43,8 @@ class Empleados extends Model
         parent::boot();
 
         // Antes de crear un registro guardar  el usuario
-        static::creating(function ($estimacion) {
-            $estimacion->Creado_Por = Auth::user()->name;
+        static::creating(function ($empleado) {
+            $empleado->Creado_Por = Auth::user()->name;
         });
     }
 }

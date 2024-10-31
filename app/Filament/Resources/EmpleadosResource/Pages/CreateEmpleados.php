@@ -61,8 +61,9 @@ $departamentoTrabajo = DepartamentoTrabajo::create([
 
 
 
-
+    
     return $empleado; // Asegúrate de retornar el empleado creado
 }
+
 
 }

@@ -59,12 +59,14 @@ class EmpleadosResource extends Resource
                             ->email()
                             ->label('Correo'),
 
-                        Forms\Components\TextInput::make('departamentoTrabajo.Dep_Trabajo')
-                            ->label('Dep_Trabajo'),
+
                     ])->columns(2),
 
+                    
                 Section::make('Datos Laborales')
                     ->schema([
+                        Forms\Components\TextInput::make('departamentoTrabajo.Dep_Trabajo')
+                        ->label('Dep_Trabajo'),
                         Forms\Components\TextInput::make('Cargo')
                             ->required(),
 
@@ -74,6 +76,8 @@ class EmpleadosResource extends Resource
 
                         Forms\Components\DateTimePicker::make('Fecha_Ingreso')
                             ->required(),
+
+
                     ])->columns(2),
             ]);
     }
@@ -82,17 +86,11 @@ class EmpleadosResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('persona.DNI')->label('DNI')->searchable()->sortable(),
-                TextColumn::make('persona.Nombres')->label('Nombres')->searchable()->sortable(),
-                TextColumn::make('persona.Apellidos')->label('Apellidos')->searchable()->sortable(),
-                TextColumn::make('persona.Genero')->label('Género')->searchable()->sortable(),
-                TextColumn::make('persona.telefono.Telefono')->label('Teléfono')->searchable()->sortable(),
-                TextColumn::make('persona.correo.Correo')->label('Correo')->searchable()->sortable(),
-                TextColumn::make('departamentoTrabajo.Dep_Trabajo')->label('Dep_Trabajo')->searchable()->sortable(),
-                TextColumn::make('Cargo')->searchable()->sortable(),
-                TextColumn::make('Sueldo')->searchable()->sortable(),
-                TextColumn::make('Fecha_Ingreso')->dateTime()->sortable(),
-                TextColumn::make('Creado_Por')->label('Creado Por')->searchable()->sortable(),
+                TextColumn::make('persona.DNI')->label('DNI') ->toggleable()->searchable()->sortable(),
+                TextColumn::make('persona.Nombres')->label('Nombres') ->toggleable()->searchable()->sortable(),
+                TextColumn::make('persona.Apellidos')->label('Apellidos') ->toggleable()->searchable()->sortable(),
+                TextColumn::make('departamentoTrabajo.Dep_Trabajo') ->toggleable()->label('Dep_Trabajo')->searchable()->sortable(),
+
             ])
             ->defaultSort('Fecha_Ingreso', 'desc')
             ->actions([
@@ -119,6 +117,8 @@ class EmpleadosResource extends Resource
             'index' => Pages\ListEmpleados::route('/'),
             'create' => Pages\CreateEmpleados::route('/create'),
             'edit' => Pages\EditEmpleados::route('/{record}/edit'),
+            'view' => Pages\ViewEmpleados::route('/{record}'),
         ];
     }
+    
 }
