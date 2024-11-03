@@ -46,8 +46,8 @@ class UserResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(255)
-                    ->unique(User::class, 'email'),
-
+                    ->unique(User::class, 'email', ignoreRecord: true),
+                    
                 TextInput::make('password')
                     ->label('Contraseña')
                     ->password()

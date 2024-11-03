@@ -79,15 +79,14 @@ class AdminPanelProvider extends PanelProvider
                     ->timestampColumn('inicio_primera_vez'),
                 FilamentBackgroundsPlugin::make()
                     ->imageProvider(
-                    MyImages::make()
-                        ->directory('images/backgrounds')
-                ),
+                        MyImages::make()
+                            ->directory('images/backgrounds')
+                    ),
                 LightSwitchPlugin::make(),
                 FilamentSpatieLaravelBackupPlugin::make()
                     ->noTimeout()
                     ->usingPage(Backups::class),
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
             ]);
-
     }
 }
