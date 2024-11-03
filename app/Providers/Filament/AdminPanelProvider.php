@@ -22,7 +22,8 @@ use Yebor974\Filament\RenewPassword\RenewPasswordPlugin;
 use Awcodes\LightSwitch\LightSwitchPlugin;
 use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 use Swis\Filament\Backgrounds\ImageProviders\MyImages;
-
+use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
+use App\Filament\Pages\Backups;
 
 
 
@@ -39,8 +40,8 @@ class AdminPanelProvider extends PanelProvider
             //->brandName('HERCOD')
             ->brandLogo(asset('images/logo.png')) //Habilitar logo
             ->darkModeBrandLogo(asset('images/logodark.jpg'))
-            ->registration()
             ->passwordReset()
+            ->emailVerification()
             ->profile()
             ->colors([
                 'primary' => Color::Amber,
@@ -82,6 +83,10 @@ class AdminPanelProvider extends PanelProvider
                         ->directory('images/backgrounds')
                 ),
                 LightSwitchPlugin::make(),
+                FilamentSpatieLaravelBackupPlugin::make()
+                    ->noTimeout()
+                    ->usingPage(Backups::class),
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
             ]);
 
     }
