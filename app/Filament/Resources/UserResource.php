@@ -39,7 +39,9 @@ class UserResource extends Resource
                 TextInput::make('username')
                     ->label('Usuario')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->maxLength(20) 
+                    ->regex('/^[A-Za-z]+$/'),
 
                 TextInput::make('email')
                     ->label('Email')
@@ -79,6 +81,7 @@ class UserResource extends Resource
                 Select::make('roles')
                     ->relationship('roles', 'name')
                     ->preload()
+                    ->required()
                     ->searchable(),
 
                 TextInput::make('creado_por')
@@ -137,5 +140,4 @@ class UserResource extends Resource
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
-
 }
