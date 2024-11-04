@@ -17,6 +17,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Tables\Columns\TextColumn;
 use ArielMejiaDev\FilamentPrintable\Actions\PrintBulkAction;
+use Filament\Notifications\Notification;
 
 
 class UserResource extends Resource
@@ -140,4 +141,5 @@ class UserResource extends Resource
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
+
 }
