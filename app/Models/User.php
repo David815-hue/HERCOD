@@ -64,4 +64,19 @@ class User extends Authenticatable implements RenewPasswordContract, FilamentUse
     {
         return true;
     }
+
+    public function save(array $options = [])
+    {
+        if ($this->isDirty('email')) {
+            $this->email_verified_at = null;
+        }
+
+        $saved = parent::save($options);
+
+        if ($saved && $this->isDirty('email')) {
+            $this->sendEmailVerificationNotification();
+        }
+
+        return $saved;
+    }
 }

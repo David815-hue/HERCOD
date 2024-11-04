@@ -41,7 +41,7 @@ class UserResource extends Resource
                     ->label('Usuario')
                     ->required()
                     ->maxLength(255)
-                    ->maxLength(20) 
+                    ->maxLength(20)
                     ->regex('/^[A-Za-z]+$/'),
 
                 TextInput::make('email')
@@ -50,7 +50,7 @@ class UserResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->unique(User::class, 'email', ignoreRecord: true),
-                    
+
                 TextInput::make('password')
                     ->label('Contraseña')
                     ->password()
@@ -83,7 +83,8 @@ class UserResource extends Resource
                     ->relationship('roles', 'name')
                     ->preload()
                     ->required()
-                    ->searchable(),
+                    ->searchable()
+                    ->disabled(!auth()->user()->hasRole('super_admin')),
 
                 TextInput::make('creado_por')
                     ->label('Creado Por')
@@ -132,7 +133,7 @@ class UserResource extends Resource
                 ]),
             ]);
     }
-
+    
     public static function getPages(): array
     {
         return [
@@ -141,5 +142,4 @@ class UserResource extends Resource
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
-
 }
