@@ -16,12 +16,14 @@ use Filament\Tables\Table;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
-
 class EmpresaResource extends Resource
 {
     protected static ?string $model = Empresa::class;
+   
+
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
+
 
 
     protected static ?string $navigationGroup = 'Entidades';

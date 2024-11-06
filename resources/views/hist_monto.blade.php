@@ -3,7 +3,7 @@
     $record = $getRecord();
     
     // Ahora sí podemos acceder al Id_Proyecto
-    $proyectoId = $record->Id_Proyecto;
+    $proyectoId = $record->ID_Proyecto;
 
     // Llamar al procedimiento almacenado para obtener el historial de montos
     $historialMontos = DB::select('CALL SEL_HISTORIALMONTO(?)', [$proyectoId]);

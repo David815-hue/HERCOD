@@ -19,7 +19,9 @@ class Persona extends Model
         'Apellidos',
         'Genero',
         'Creado_Por',
-        'Fecha_Creacion'
+        'Fecha_Creacion',
+        'Estado'
+
     ];
 
     public function empleado(): HasOne
@@ -37,6 +39,17 @@ class Persona extends Model
         return $this->hasOne(Correo::class, 'ID_Persona', 'ID_Persona');
     }
     
+    
+    public function proyecto() //Relacion hacia proyecto
+    {
+        return $this->belongsTo(Proyecto::class, 'ID_Persona', 'Encargado');
+    }
+
+    public function tarea() //Relacion hacia proyecto
+    {
+        return $this->belongsTo(Tarea::class, 'ID_Persona', 'Responsable');
+    }
+
     protected static function boot()  // Esto es para agregar el Creado por
     {
         parent::boot();
@@ -46,4 +59,7 @@ class Persona extends Model
             $estimacion->Creado_Por = Auth::user()->name;
         });
     }
+
+
+  
 }

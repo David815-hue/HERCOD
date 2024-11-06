@@ -9,6 +9,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Pelmered\FilamentMoneyField\Tables\Columns\MoneyColumn;
 
 class EstimacionesRelationManager extends RelationManager
 
@@ -24,7 +25,10 @@ class EstimacionesRelationManager extends RelationManager
         ->schema([
             Forms\Components\TextInput::make('Estimacion')
                 ->required()
-                ->maxLength(255),
+                ->numeric()
+                ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2),
+            Forms\Components\TextInput::make('Descripcion')
+                ->label('Descripcion'),
             Forms\Components\DatePicker::make('Fecha_Estimacion')
                 ->required(),
             Forms\Components\DatePicker::make('Fecha_Subsanacion')
@@ -38,8 +42,12 @@ class EstimacionesRelationManager extends RelationManager
             ->recordTitleAttribute('Estimacion')
             ->columns([
                 Tables\Columns\TextColumn::make('Estimacion')
+                    ->money('hnl')
                     ->sortable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('Descripcion')
+                    ->label('Descripcion')
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('Fecha_Estimacion')
                     ->date()
                     ->sortable(),
@@ -55,6 +63,7 @@ class EstimacionesRelationManager extends RelationManager
                     ->sortable()
                     ->toggleable(),
             ])
+            
             ->filters([
                 //
             ])

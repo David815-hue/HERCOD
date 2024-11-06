@@ -24,6 +24,8 @@ use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 use Swis\Filament\Backgrounds\ImageProviders\MyImages;
 use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
 use App\Filament\Pages\Backups;
+use App\Filament\Widgets\ProyectosPorDepartamentoChart;
+
 
 
 
@@ -54,6 +56,8 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+                ProyectosPorDepartamentoChart::class,
+
                 //Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([

@@ -33,12 +33,12 @@ class Empleados extends Model
     {
         return $this->belongsTo(DepartamentoTrabajo::class, 'ID_Departamento_trabajo', 'ID_Departamento_trabajo');
     }
+
     
     
-
-
-
     protected static function boot()  // Esto es para agregar el Creado por
+
+
     {
         parent::boot();
 

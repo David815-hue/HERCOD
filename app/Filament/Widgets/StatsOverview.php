@@ -6,6 +6,9 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use App\Models\User; 
 use App\Models\Proyecto;
+use App\Models\Empleados;
+use App\Models\Empresa;
+
 
 class StatsOverview extends BaseWidget
 {
@@ -22,11 +25,11 @@ class StatsOverview extends BaseWidget
                 ->color('success')
                 ->description('Usuarios registrados')
                 ->icon('heroicon-o-users'),
-            Stat::make('Empleados', '1')
+            Stat::make('Empleados', Empleados::count())
                 ->color('success')
                 ->description('Empleados registrados')
                 ->icon('heroicon-o-user-group'),
-            Stat::make('Empresas', '3')
+            Stat::make('Empresas', Empresa::count())
                 ->color('success')
                 ->description('Empresas registradas')
                 ->icon('heroicon-o-building-office'),

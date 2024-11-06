@@ -17,7 +17,14 @@ class EditEmpresa extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->before(function (Model $record) {
+                    // Eliminar la dirección específica antes de eliminar la empresa
+                    $direccion = $record->direcciones()->first(); // Aquí selecciona la dirección específica que quieres eliminar
+                    if ($direccion) {
+                        $direccion->delete();
+                    }
+                }),
         ];
     }
 
