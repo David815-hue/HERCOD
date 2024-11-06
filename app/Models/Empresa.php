@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+
 
 class Empresa extends Model
 {
@@ -34,20 +35,30 @@ class Empresa extends Model
         return $this->hasOne(Correo::class, 'ID_Persona', 'ID_Persona');
     }
 
-    public function direcciones(): HasMany
+
+   /* public function direcciones(): HasMany
     {
         return $this->hasMany(Direcciones::class, 'ID_Empresa', 'ID_Empresa');
+    } */
+
+
+    public function direcciones(): BelongsTo
+    {
+        return $this->belongsTo(Direcciones::class, 'ID_Empresa', 'ID_Empresa');
     }
 
+
+    /*
     public function departamento(): BelongsTo
     {
         return $this->belongsTo(Departamentos::class, 'ID_Departamento', 'ID_Departamento_trabajo');
-    }
+    } */
 
-    public function municipio(): BelongsTo
+    /*public function municipio(): BelongsTo
     {
         return $this->belongsTo(Municipio::class, 'ID_Municipio', 'ID_Municipio');
-    }
+    }*/
+
     protected static function boot()  // Esto es para agregar el Creado por
     {
         parent::boot();
@@ -57,5 +68,12 @@ class Empresa extends Model
             $empresa->Creado_Por = Auth::user()->name;
         });
     }
+
+    public function proyecto() //Relacion hacia proyecto
+    {
+        return $this->belongsTo(Proyecto::class, 'ID_Empresa', 'ID_Empresa');
+    }
 }
+
+
 

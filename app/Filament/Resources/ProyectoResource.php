@@ -336,63 +336,7 @@ class ProyectoResource extends Resource
                             ->send();
                         }),
 
-                        /* Tables\Actions\Action::make('create_tareas')
-                        ->label('Tareas')
-                        ->icon('heroicon-o-plus')
-                        ->color('success')
-                        ->form([
-                            Forms\Components\TextInput::make('Descripcion')
-                            ->label('Tarea')
-                            ->required(),
-                            Forms\Components\DatePicker::make('Fecha_Inicio')
-                                ->label('Fecha de Inicio')
-                                ->required(),
-                            Forms\Components\Select::make('Responsable')
-                                ->relationship(
-                                    'persona',
-                                    'ID_Persona',
-                                    fn ($query) => $query
-                                        ->select(['ID_Persona', 'Nombres', 'Apellidos'])
-                                        ->where('Estado', 'Activo')
-                                )
-                                ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->Nombres} {$record->Apellidos}")
-                                ->label('Responsable')
-                                ->required(),
-                        ])
-                        ->action(function (array $data, $record) {
-
-                            $ID_Proyecto = $record->ID_Proyecto;
-
-                            $Estado = 0;
-
-                            Tarea::create([
-                                'Descripcion' => $data['Descripcion'], 
-                                'Fecha_Inicio' => $data['Fecha_Inicio'],
-                                'Estado' => $Estado,
-                                'Responsable' => $data['Responsable'], 
-                                'ID_Proyecto' => $ID_Proyecto, // Usando el ID del proyecto obtenido
-                            ]);
-
-                            Notification::make()
-                            ->title('Tarea creada con éxito') 
-                            ->success() 
-                            ->send();
-                        }),
-
-                        Tables\Actions\Action::make('view_tareas')
-                        ->label('Ver Tareas')
-                        ->color('danger')
-                        ->icon('heroicon-o-credit-card')
-                        ->modalHeading('Tareas')
-                        ->modalWidth('5xl') // Ajusta el tamaño del modal según sea necesario
-                        ->modalContent(function ($record) {
-                            
-
-                            // Retorna la vista con las tareas
-                            return view('tareas', [
-                                'record' => $record // Pasamos el record a la vista
-                            ]);
-                        }) */
+                        
                        
             
                 ]),
