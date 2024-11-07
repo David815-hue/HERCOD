@@ -7,6 +7,7 @@ use App\Filament\Resources\EmpleadosResource;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon; // Asegúrate de importar Carbon
 use App\Models\Persona;
 use App\Models\Telefono;
 use App\Models\Correo;
@@ -51,7 +52,7 @@ $departamentoTrabajo = DepartamentoTrabajo::create([
     $empleado = Empleados::create([
         'Cargo' => $data['Cargo'],
         'Sueldo' => $data['Sueldo'],
-        'Fecha_Ingreso' => $data['Fecha_Ingreso'],
+        'Fecha_Ingreso' => Carbon::now(),
         'ID_Persona' => $persona->ID_Persona,
         'ID_Departamento_trabajo' => $departamentoTrabajo->ID_Departamento_trabajo,
     ]);

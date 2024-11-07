@@ -17,10 +17,9 @@ class Estimaciones extends Model
  
     protected $primaryKey = 'ID_Estimacion'; //Poner la PK
 
-    //Funcion para relaciones.
     public function proyecto() //Relacion hacia proyecto
     {
-        return $this->belongsTo(Proyecto::class, 'ID_Proyecto', 'Id_Proyecto');
+        return $this->belongsTo(Proyecto::class, 'ID_Proyecto', 'ID_Proyecto');
     }
 
 
@@ -28,9 +27,12 @@ class Estimaciones extends Model
     {
         parent::boot();
 
+
         // Antes de crear un registro guardar  el usuario
         static::creating(function ($estimacion) {
             $estimacion->Creado_Por = Auth::user()->name;
+            $estimacion->Fecha_Creacion = now();
+
         });
     }
 
@@ -41,6 +43,8 @@ class Estimaciones extends Model
         'Fecha_Estimacion',
         'Fecha_Subsanacion',
         'ID_Proyecto',
+        'Fecha_Creacion',
+        'Descripcion'
     ];
 
 

@@ -9,6 +9,9 @@ use App\Models\Proyecto;
 
 class StatsOverview extends BaseWidget
 {
+
+    //use HasPageShield;
+
     protected function getStats(): array
     {
 
@@ -22,11 +25,11 @@ class StatsOverview extends BaseWidget
                 ->color('success')
                 ->description('Usuarios registrados')
                 ->icon('heroicon-o-users'),
-            Stat::make('Empleados', '1')
+            Stat::make('Empleados', Empleados::count())
                 ->color('success')
                 ->description('Empleados registrados')
                 ->icon('heroicon-o-user-group'),
-            Stat::make('Empresas', '3')
+            Stat::make('Empresas', Empresa::count())
                 ->color('success')
                 ->description('Empresas registradas')
                 ->icon('heroicon-o-building-office'),
@@ -43,6 +46,5 @@ class StatsOverview extends BaseWidget
 
         
     }
-
    
 }

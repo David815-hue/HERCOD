@@ -26,6 +26,6 @@ class HistMonto extends Model
 
     public function proyecto() //Relacion hacia proyecto
     {
-        return $this->belongsTo(Proyecto::class, 'ID_Proyecto', 'Id_Proyecto');
+        return $this->belongsTo(Proyecto::class, 'ID_Proyecto', 'ID_Proyecto');
     }
 }

@@ -6,13 +6,16 @@ use App\Filament\Resources\EmpleadosResource\Pages;
 use App\Filament\Resources\EmpleadosResource\RelationManagers;
 use App\Models\Empleados;
 use Filament\Forms;
+use Carbon\Carbon; // Asegúrate de importar Carbon
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
+use Filament\Tables\Actions\Action;
 
 class EmpleadosResource extends Resource
 {
@@ -45,6 +48,7 @@ class EmpleadosResource extends Resource
                             ->options([
                                 'Masculino' => 'Masculino',
                                 'Femenino' => 'Femenino',
+
 
                             ])
                             ->required(),
@@ -96,13 +100,29 @@ class EmpleadosResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-
+                Action::make('toggleStatus')
+                    ->label(fn ($record) => $record->persona->Estado === 'Activo' ? 'Desactivar' : 'Activar')
+                    ->icon(fn ($record) => $record->persona->Estado === 'Activo' ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
+                    ->color(fn ($record) => $record->persona->Estado === 'Activo' ? 'danger' : 'success')
+                    ->action(function (Empleados $record) {
+                        $newStatus = $record->persona->Estado === 'Activo' ? 'Inactivo' : 'Activo';
+                        $record->persona->update(['Estado' => $newStatus]);
+                    })
+                    ->requiresConfirmation()
+                    ->modalHeading(fn ($record) => $record->persona->Estado === 'Activo' ? 
+                        '¿Desactivar empleado?' : '¿Activar empleado?')
+                    ->modalDescription(fn ($record) => $record->persona->Estado === 'Activo' ? 
+                        'El empleado será marcado como inactivo.' : 'El empleado será marcado como activo.')
+                    ->modalSubmitActionLabel(fn ($record) => $record->persona->Estado === 'Activo' ? 
+                        'Sí, desactivar' : 'Sí, activar')
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+            ->filters([
+                Tables\Filters\SelectFilter::make('Estado')
+                    ->options([
+                        'Activo' => 'Activo',
+                        'Inactivo' => 'Inactivo',
+                    ])
+                    ->attribute('persona.Estado')
             ]);
     }
 

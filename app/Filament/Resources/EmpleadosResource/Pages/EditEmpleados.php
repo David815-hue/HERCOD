@@ -8,6 +8,7 @@ use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model; 
 use App\Models\Persona;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon; 
 
 
 class EditEmpleados extends EditRecord
@@ -74,12 +75,13 @@ class EditEmpleados extends EditRecord
         $record->update([
             'Cargo' => $data['Cargo'],
             'Sueldo' => $data['Sueldo'],
-            'Fecha_Ingreso' => $data['Fecha_Ingreso'],
+            'Fecha_Ingreso' => $data['Fecha_Ingreso'] ?? Carbon::now(), 
         ]);
 
         return $record;
     }
 
+   
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');

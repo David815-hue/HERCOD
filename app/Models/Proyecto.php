@@ -5,17 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 
 class Proyecto extends Model
 {
     use HasFactory;
 
-    protected $table = 'tbl_proyecto';
+    protected $table = 'tbl_proyectos';
 
     public $timestamps = false;
 
-    protected $primaryKey = 'Id_Proyecto';
+    protected $primaryKey = 'ID_Proyecto';
 
 
 
@@ -48,6 +49,8 @@ class Proyecto extends Model
         // Antes de crear un registro
         static::creating(function ($proyecto) {
             $proyecto->Creado_Por = Auth::user()->name;
+            $proyecto->Fecha_Creacion = now();
+
         });
 
         //Antes de actualizar
@@ -56,17 +59,46 @@ class Proyecto extends Model
             $proyecto->Fecha_Modificacion = now();
         });
 
+        static::deleting(function ($proyecto) {
+            $proyecto->historialMontos()->delete(); // Elimina los registros en tbl_hist_monto
+            $proyecto->Estimaciones()->delete();
+        });
+
        
     }
 
     public function historialMontos() //Relacion hacia HistorialMonto
     {
-        return $this->hasMany(HistMonto::class, 'ID_Proyecto', 'Id_Proyecto');
+        return $this->hasMany(HistMonto::class, 'ID_Proyecto', 'ID_Proyecto');
     }
 
     public function Estimaciones() //Relacion hacia HistorialMonto
     {
-        return $this->hasMany(Estimaciones::class, 'ID_Proyecto', 'Id_Proyecto');
+        return $this->hasMany(Estimaciones::class, 'ID_Proyecto', 'ID_Proyecto');
     }
 
+    public function Tarea() //Relacion hacia HistorialMonto
+    {
+        return $this->hasMany(Tarea::class, 'ID_Proyecto', 'ID_Proyecto');
+    }
+
+    
+
+    public function municipio(): BelongsTo
+    {
+        return $this->belongsTo(Municipio::class, 'ID_Municipio', 'ID_Municipio');
+    } 
+
+
+        public function persona()
+    {
+        return $this->belongsTo(Persona::class, 'Encargado', 'ID_Persona');
+    }
+
+    public function empresa()
+    {
+        return $this->hasMany(Empresa::class, 'ID_Empresa', 'ID_Empresa');
+    }
+
+    
 }
