@@ -21,4 +21,6 @@ class Telefono extends Model
     {
         return $this->belongsTo(Persona::class, 'ID_Persona', 'ID_Persona');
     }
+
+    
 }

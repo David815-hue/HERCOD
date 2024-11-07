@@ -17,7 +17,14 @@ class EditEmpresa extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->before(function (Model $record) {
+                    // Eliminar la dirección específica antes de eliminar la empresa
+                    $direccion = $record->direcciones()->first(); // Aquí selecciona la dirección específica que quieres eliminar
+                    if ($direccion) {
+                        $direccion->delete();
+                    }
+                }),
         ];
     }
 
@@ -26,32 +33,59 @@ class EditEmpresa extends EditRecord
         // Obtener la empresa con sus relaciones
         $empresa = $this->record;
 
-        // Estructurar los datos anidados, verificando si las relaciones existen
-        $data['RTN'] = $empresa->RTN;
-        $data['Nombre_Empresa'] = $empresa->Nombre_Empresa;
-
-        $data['departamento'] = $empresa->departamento ? [
-            'ID_Departamento' => $empresa->departamento->ID_Departamento,
-            'Nom_Departamento' => $empresa->departamento->Nom_Departamento,
-        ] : null; // o asignar valores predeterminados si es necesario
-
-        $data['municipio'] = $empresa->municipio ? [
-            'ID_Municipio' => $empresa->municipio->ID_Municipio,
-            'Nom_Municipio' => $empresa->municipio->Nom_Municipio,
-        ] : null; // o asignar valores predeterminados si es necesario
+        $data = [
+            'RTN' => $empresa->RTN,
+            'Nombre_Empresa' => $empresa->Nombre_Empresa,
+            'Fecha_Creacion' => $empresa->Fecha_Creacion,
+            'direcciones' => [
+                'Nom_Direccion' => $empresa->direcciones->Nom_Direccion,
+                'Tip_Direccion' => $empresa->direcciones->Tip_Direccion,
+                'Descripcion' => $empresa->direcciones->Descripcion,
+                'municipio' => [
+                    'departamento' => [
+                        'Nom_Departamento' => $empresa->direcciones->municipio->departamento->Nom_Departamento ?? null,
+                    ],
+                    'Nom_Municipio' => $empresa->direcciones->municipio->Nom_Municipio ?? null,
+                ],
+            ],
+        ];
 
         return $data;
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        // Actualizar los campos específicos de la empresa
+        // Actualiza los campos específicos de la empresa
         $record->update([
             'RTN' => $data['RTN'],
             'Nombre_Empresa' => $data['Nombre_Empresa'],
-            'ID_Departamento' => $data['departamento']['ID_Departamento'] ?? null, // Usar null si no hay departamento
-            'ID_Municipio' => $data['municipio']['ID_Municipio'] ?? null, // Usar null si no hay municipio
         ]);
+
+        // Obtener o crear el departamento
+        $departamentoName = $data['direcciones']['municipio']['departamento']['Nom_Departamento'] ?? null;
+        $departamento = Departamentos::firstOrCreate(['Nom_Departamento' => $departamentoName]);
+
+        // Obtener o crear el municipio
+        $municipioName = $data['direcciones']['municipio']['Nom_Municipio'] ?? null;
+        $municipio = Municipio::firstOrCreate([
+            'Nom_Municipio' => $municipioName,
+            'ID_Departamento' => $departamento->ID_Departamento,
+        ]);
+
+        // Actualizar o crear la dirección asociada
+        $direccionData = [
+            'Nom_Direccion' => $data['direcciones']['Nom_Direccion'],
+            'Tip_Direccion' => $data['direcciones']['Tip_Direccion'],
+            'Descripcion' => $data['direcciones']['Descripcion'],
+            'ID_Municipio' => $municipio->ID_Municipio, // Aquí utilizas el ID del municipio creado
+        ];
+
+        // Actualiza la dirección asociada (suponiendo que ya tienes una dirección relacionada con la empresa)
+        // Si la dirección no existe, necesitarás crearla.
+        $record->direcciones()->updateOrCreate(
+            ['ID_Empresa' => $record->ID_Empresa], // Cambia esto según tu lógica
+            $direccionData
+        );
 
         return $record;
     }
