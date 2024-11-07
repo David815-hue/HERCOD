@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -17,7 +19,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 class User extends Authenticatable implements RenewPasswordContract, FilamentUser, MustVerifyEmail
 {
-    use HasFactory, Notifiable, RenewPassword, HasRoles, HasPanelShield;
+    use HasFactory, Notifiable, RenewPassword, HasRoles, HasPanelShield, LogsActivity;
 
     public $timestamps = false;
 
@@ -79,4 +81,10 @@ class User extends Authenticatable implements RenewPasswordContract, FilamentUse
 
         return $saved;
     }
+    public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
+        ->logOnly(['username', 'email']) 
+        ->useLogName('user_activity');
+    }
+
+    
 }

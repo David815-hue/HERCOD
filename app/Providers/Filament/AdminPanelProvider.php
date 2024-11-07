@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Rmsramos\Activitylog\ActivitylogPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -87,6 +88,17 @@ class AdminPanelProvider extends PanelProvider
                     ->noTimeout()
                     ->usingPage(Backups::class),
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+
+                ActivitylogPlugin::make()
+                ->label('Log')
+                ->pluralLabel('Bitacora')
+                ->navigationItem(true)
+                ->navigationGroup('Seguridad')
+                ->navigationIcon('heroicon-o-document-text')
+                ->navigationCountBadge(true)
+                ->navigationSort(2),
+
+
             ]);
     }
 }
