@@ -6,9 +6,13 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use App\Models\User; 
 use App\Models\Proyecto;
+//use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class StatsOverview extends BaseWidget
 {
+
+    //use HasPageShield;
+
     protected function getStats(): array
     {
 
@@ -43,6 +47,5 @@ class StatsOverview extends BaseWidget
 
         
     }
-
    
 }
