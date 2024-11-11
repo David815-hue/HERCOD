@@ -5,7 +5,7 @@ namespace App\Filament\Resources\EmpresaResource\Pages;
 use App\Filament\Resources\EmpresaResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Pages\Actions\ButtonAction;
+use Filament\Actions\Action;
 
 class ViewEmpresa extends ViewRecord
 {
@@ -15,11 +15,17 @@ class ViewEmpresa extends ViewRecord
     {
         return [
             Actions\EditAction::make(),
-            Actions\DeleteAction::make(),
-            ButtonAction::make('Regresar')
-                ->label('Regresar al índice')
+            Actions\DeleteAction::make()
+                ->before(function ($record) {
+                    // Eliminar registros relacionados
+                    $record->telefono()->delete();
+                    $record->correo()->delete();
+                    $record->direcciones()->delete();
+                }),
+            Action::make('back')
+                ->label('Regresar')
                 ->url($this->getResource()::getUrl('index'))
-                ->color('success')
+                ->color('secondary')
                 ->icon('heroicon-o-arrow-left'),
         ];
     }
@@ -28,27 +34,54 @@ class ViewEmpresa extends ViewRecord
     {
         $empresa = $this->record;
 
+        // Verificar que las relaciones existan antes de acceder a ellas
+        $telefono = $empresa->telefono;
+        $correo = $empresa->correo;
+        $direcciones = $empresa->direcciones;
+        
         $data = [
             'RTN' => $empresa->RTN,
             'Nombre_Empresa' => $empresa->Nombre_Empresa,
-            'Fecha_Creacion' => $empresa->Fecha_Creacion,
-            'direcciones' => [
-                'Nom_Direccion' => $empresa->direcciones->Nom_Direccion,
-                'Tip_Direccion' => $empresa->direcciones->Tip_Direccion,
-                'Descripcion' => $empresa->direcciones->Descripcion,
-                'municipio' => [
-                    'Nom_Municipio' => $empresa->direcciones->municipio->Nom_Municipio ?? null,
-                    'departamento' => [
-                        'Nom_Departamento' => $empresa->direcciones->municipio->departamento->Nom_Departamento ?? null,
-                    ],
-                ],
+
+            'telefono' => [
+                'Telefono' => $telefono ? $telefono->Telefono : null
+            ],
+            'correo' => [
+                'Correo' => $correo ? $correo->Correo : null
             ],
         ];
 
-        // Agregar otros campos específicos de la empresa, si existen
+
+        // Agregar datos de dirección si existe
+        if ($direcciones) {
+            $data['direcciones'] = [
+                'Nom_Direccion' => $direcciones->Nom_Direccion,
+                'Tip_Direccion' => $direcciones->Tip_Direccion,
+                'Descripcion' => $direcciones->Descripcion,
+            ];
+
+            // Agregar datos de municipio si existe
+            if ($direcciones->municipio) {
+                $data['direcciones']['municipio'] = [
+                    'Nom_Municipio' => $direcciones->municipio->Nom_Municipio,
+                ];
+
+                // Agregar datos de departamento si existe
+                if ($direcciones->municipio->departamento) {
+                    $data['direcciones']['municipio']['departamento'] = [
+                        'Nom_Departamento' => $direcciones->municipio->departamento->Nom_Departamento,
+                    ];
+                }
+            }
+        }
+
+        // Agregar campos adicionales si existen
         if ($empresa->Creado_Por) {
             $data['Creado_Por'] = $empresa->Creado_Por;
         }
+        $data['Fecha_Creacion'] = $empresa->Fecha_Creacion;
+
+
 
         return $data;
     }

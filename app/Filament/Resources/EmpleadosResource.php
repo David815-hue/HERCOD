@@ -5,8 +5,10 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\EmpleadosResource\Pages;
 use App\Filament\Resources\EmpleadosResource\RelationManagers;
 use App\Models\Empleados;
-use Filament\Forms;
+use App\Models\DepartamentoTrabajo;
+use Filament\Forms\Components\TextInput;
 use Carbon\Carbon; // Asegúrate de importar Carbon
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -32,15 +34,19 @@ class EmpleadosResource extends Resource
             ->schema([
                 Section::make('Datos Personales')
                     ->schema([
-                        Forms\Components\TextInput::make('persona.DNI')
+                        TextInput::make('persona.DNI')
                             ->required()
-                            ->label('DNI'),
+                            ->label('DNI')
+                            ->numeric()
+                            ->minLength(13)
+                            ->maxLength(13)
+                            ->rules(['digits:13']),
 
-                        Forms\Components\TextInput::make('persona.Nombres')
+                        TextInput::make('persona.Nombres')
                             ->required()
                             ->label('Nombres'),
 
-                        Forms\Components\TextInput::make('persona.Apellidos')
+                        TextInput::make('persona.Apellidos')
                             ->required()
                             ->label('Apellidos'),
 
@@ -48,39 +54,73 @@ class EmpleadosResource extends Resource
                             ->options([
                                 'Masculino' => 'Masculino',
                                 'Femenino' => 'Femenino',
-
-
+                                
+                                
                             ])
                             ->required(),
 
-                        Forms\Components\TextInput::make('persona.telefono.Telefono')
+                        TextInput::make('persona.telefono.Telefono')
                             ->required()
                             ->tel()
-                            ->label('Teléfono'),
+                            ->label('Teléfono')
+                            ->numeric()
+                            ->minLength(8)
+                            ->maxLength(8)
+                            ->rules(['digits:8']),
 
-                        Forms\Components\TextInput::make('persona.correo.Correo')
+                        TextInput::make('persona.correo.Correo')
                             ->required()
                             ->email()
                             ->label('Correo'),
 
+                        Forms\Components\Select::make('persona.Estado')
+                            ->options([
+                                'Activo' => 'Activo',
+                                'Inactivo' => 'Inactivo',
+                            ])
+                            ->default('Activo')
+                            ->required(),
 
                     ])->columns(2),
 
-                    
-                Section::make('Datos Laborales')
+
+                    Section::make('Datos Laborales')
                     ->schema([
-                        Forms\Components\TextInput::make('departamentoTrabajo.Dep_Trabajo')
-                        ->label('Dep_Trabajo'),
+                        Select::make('departamentoTrabajo.Dep_Trabajo')
+                            ->label('Departamento')
+                            ->options(fn () => \App\Models\DepartamentoTrabajo::pluck('Dep_Trabajo', 'Dep_Trabajo'))
+                            ->required()
+                            ->createOptionForm([
+                                TextInput::make('Dep_Trabajo')
+                                    ->required()
+                                    ->label('Nuevo Departamento')
+                                    ->minLength(3)
+                                    ->maxLength(50)
+                                    ->unique('TBL_Departamento_Trabajo', 'Dep_Trabajo')
+                            ])
+                            ->createOptionUsing(function (array $data) {
+                                $departamento = \App\Models\DepartamentoTrabajo::create([
+                                    'Dep_Trabajo' => $data['Dep_Trabajo']
+                                ]);
+                                
+                                return $departamento->Dep_Trabajo;
+                            })
+                            ->createOptionAction(function (Forms\Components\Actions\Action $action) {
+                                return $action
+                                    ->modalHeading('Crear Nuevo Departamento')
+                                    ->modalButton('Crear Departamento')
+                                    ->modalWidth('md');
+                            }),
                         Forms\Components\TextInput::make('Cargo')
                             ->required(),
 
                         Forms\Components\TextInput::make('Sueldo')
                             ->required()
+                            ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
                             ->numeric(),
 
-                        Forms\Components\DateTimePicker::make('Fecha_Ingreso')
-                            ->required(),
-
+                        Forms\Components\DatePicker::make('Fecha_Ingreso')
+                            ->required()
 
                     ])->columns(2),
             ]);
@@ -90,11 +130,34 @@ class EmpleadosResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('persona.DNI')->label('DNI') ->toggleable()->searchable()->sortable(),
-                TextColumn::make('persona.Nombres')->label('Nombres') ->toggleable()->searchable()->sortable(),
-                TextColumn::make('persona.Apellidos')->label('Apellidos') ->toggleable()->searchable()->sortable(),
-                TextColumn::make('departamentoTrabajo.Dep_Trabajo') ->toggleable()->label('Dep_Trabajo')->searchable()->sortable(),
-
+                TextColumn::make('persona.DNI')
+                    ->label('DNI')
+                    ->toggleable()
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('persona.Nombres')
+                    ->label('Nombres')
+                    ->toggleable()
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('persona.Apellidos')
+                    ->label('Apellidos')
+                    ->toggleable()
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('departamentoTrabajo.Dep_Trabajo')
+                    ->toggleable()
+                    ->label('Dep_Trabajo')
+                    ->searchable()
+                    ->sortable(),
+                BadgeColumn::make('persona.Estado')
+                    ->colors([
+                        'success' => 'Activo',
+                        'danger' => 'Inactivo',
+                    ])
+                    ->label('Estado')
+                    ->toggleable()
+                    ->sortable(),
             ])
             ->defaultSort('Fecha_Ingreso', 'desc')
             ->actions([
@@ -140,5 +203,5 @@ class EmpleadosResource extends Resource
             'view' => Pages\ViewEmpleados::route('/{record}'),
         ];
     }
-    
+
 }

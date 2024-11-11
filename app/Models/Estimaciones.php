@@ -30,7 +30,7 @@ class Estimaciones extends Model
 
         // Antes de crear un registro guardar  el usuario
         static::creating(function ($estimacion) {
-            $estimacion->Creado_Por = Auth::user()->name;
+            $estimacion->Creado_Por = Auth::user()->username;
             $estimacion->Fecha_Creacion = now();
 
         });

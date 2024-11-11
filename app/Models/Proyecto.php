@@ -12,7 +12,7 @@ class Proyecto extends Model
 {
     use HasFactory;
 
-    protected $table = 'tbl_proyectos';
+    protected $table = 'TBL_Proyectos';
 
     public $timestamps = false;
 
@@ -48,14 +48,14 @@ class Proyecto extends Model
 
         // Antes de crear un registro
         static::creating(function ($proyecto) {
-            $proyecto->Creado_Por = Auth::user()->name;
+            $proyecto->Creado_Por = Auth::user()->username;
             $proyecto->Fecha_Creacion = now();
 
         });
 
         //Antes de actualizar
         static::updating(function ($proyecto) {
-            $proyecto->Modificado_Por = Auth::user()->name;
+            $proyecto->Modificado_Por = Auth::user()->username;
             $proyecto->Fecha_Modificacion = now();
         });
 

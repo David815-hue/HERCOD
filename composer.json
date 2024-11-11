@@ -14,6 +14,7 @@
         "awcodes/light-switch": "^1.0",
         "bezhansalleh/filament-shield": "^3.2",
         "filament/filament": "^3.2",
+        "ibrahim-bougaoua/filaprogress": "^0.1.0",
         "joaopaulolndev/filament-edit-profile": "^1.0",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",

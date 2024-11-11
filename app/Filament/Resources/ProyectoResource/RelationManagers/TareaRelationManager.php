@@ -25,7 +25,20 @@ class TareaRelationManager extends RelationManager
                 Forms\Components\TextInput::make('Descripcion')
                     ->label('Tarea')
                     ->required(),
-                
+                Forms\Components\DatePicker::make('Fecha_Inicio')
+                    ->label('Fecha de Inicio')
+                    ->required(),
+                Forms\Components\Select::make('Responsable')
+                    ->relationship(
+                        'persona',
+                        'ID_Persona',
+                        fn ($query) => $query
+                            ->select(['ID_Persona', 'Nombres', 'Apellidos'])
+                            ->where('Estado', 'Activo')
+                        )
+                        ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->Nombres} {$record->Apellidos}")
+                        ->label('Responsable')
+                        ->required(),
             ]);
     }
 
@@ -34,7 +47,22 @@ class TareaRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('Descripcion')
             ->columns([
-                
+                Tables\Columns\TextColumn::make('Descripcion'),
+                Tables\Columns\TextColumn::make('Fecha_Inicio')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('persona')
+                    ->label('Encargado')
+                    ->formatStateUsing(fn ($state) => "{$state->Nombres} {$state->Apellidos}")
+                    ->toggleable()
+                    ->searchable(),
+                CheckboxColumn::make('Estado'),
+                Tables\Columns\TextColumn::make('Fecha_Completado')
+                ->date()
+                ->sortable(),
+                Tables\Columns\TextColumn::make('Creado_Por')
+                ->searchable(),
+
             ])
             ->filters([
                 //
@@ -50,3 +78,4 @@ class TareaRelationManager extends RelationManager
             ]);
     }
 }
+

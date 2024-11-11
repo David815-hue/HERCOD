@@ -18,7 +18,20 @@ class ViewProyecto extends ViewRecord
                 ->url(static::getResource()::getUrl())
                 ->button()
                 ->label('Atras')
+                ->icon('heroicon-o-arrow-left')
                 ->color('success'),
+
+                Action::make('refresh')
+                ->label('Refrescar')
+                ->color('primary')
+                ->button()
+                ->icon('heroicon-o-arrow-path')
+                ->action('refreshPage'),
         ];
+    }
+
+    public function refreshPage()
+    {
+        $this->redirect($this->getResource()::getUrl('view', ['record' => $this->record->getKey()]));
     }
 }

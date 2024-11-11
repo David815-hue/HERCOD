@@ -25,14 +25,15 @@ class Empresa extends Model
         'ID_Municipio',
     ];
 
-    public function telefono(): HasOne
-    {
-        return $this->hasOne(Telefono::class, 'ID_Persona', 'ID_Persona');
-    }
+ 
+    public function telefono()
+{
+    return $this->hasOne(Telefono::class, 'ID_Empresa', 'ID_Empresa');
+}
 
-    public function correo(): HasOne
+    public function correo()
     {
-        return $this->hasOne(Correo::class, 'ID_Persona', 'ID_Persona');
+        return $this->hasOne(Correo::class, 'ID_Empresa', 'ID_Empresa');
     }
 
 
@@ -65,7 +66,10 @@ class Empresa extends Model
 
         // Antes de crear un registro guardar  el usuario
         static::creating(function ($empresa) {
-            $empresa->Creado_Por = Auth::user()->name;
+            $empresa->Creado_Por = Auth::user()->username;
+            $empresa->Fecha_Creacion = now();
+            
+
         });
     }
 

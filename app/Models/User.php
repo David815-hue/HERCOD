@@ -83,7 +83,7 @@ class User extends Authenticatable implements RenewPasswordContract, FilamentUse
     }
     public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
         ->logOnly(['username', 'email']) 
-        ->useLogName('user_activity');
+        ->useLogName('actividad');
     }
 
     

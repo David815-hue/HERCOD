@@ -35,8 +35,10 @@ use App\Models\Municipio;
 use App\Models\Departamentos;
 use Filament\Forms\Components\TextInput;
 use RyanChandler\FilamentProgressColumn\ProgressColumn;
-
-
+use IbrahimBougaoua\FilaProgress\Tables\Columns\CircleProgress;
+use IbrahimBougaoua\FilaProgress\Tables\Columns\ProgressBar;
+use IbrahimBougaoua\FilaProgress\Infolists\Components\CircleProgressEntry;
+use IbrahimBougaoua\FilaProgress\Infolists\Components\ProgressBarEntry;
 
 class ProyectoResource extends Resource
 {
@@ -71,11 +73,8 @@ class ProyectoResource extends Resource
             Forms\Components\TextInput::make('Anticipo')
                 ->label('Anticipo')
                 ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
-                ->required()
                 ->step(1)
                 ->numeric(),
-
-            
 
             Forms\Components\DatePicker::make('Fecha_FirmaContrato')
                 ->label('Fecha Firma de Contrato')
@@ -206,6 +205,16 @@ class ProyectoResource extends Resource
                 ->label('Usuario Modificacion'),
                 TextEntry::make('Fecha_Modificacion')
                 ->label('Fecha Modificacion'),
+                ProgressBarEntry::make('circle')
+                    ->label('Progreso')
+                    ->getStateUsing(function (Proyecto $record) {
+                        $totalTareas = $record->Tarea()->count();
+                        $tareasCompletadas = $record->Tarea()->where('Estado', true)->count();
+                        return [
+                            'total' => $totalTareas,
+                            'progress' => $tareasCompletadas,
+                        ];
+                    }),
 
             ]),
         
@@ -277,6 +286,18 @@ class ProyectoResource extends Resource
                     ->label('Encargado')
                     ->formatStateUsing(fn ($state) => "{$state->Nombres} {$state->Apellidos}")
                     ->toggleable(),
+                CircleProgress::make('circle')
+                    ->label('Progreso')
+                    ->toggleable()
+                    ->getStateUsing(function (Proyecto $record) {
+                        $totalTareas = $record->Tarea()->count();
+                        $tareasCompletadas = $record->Tarea()->where('Estado', true)->count();
+                        return [
+                            'total' => $totalTareas,
+                            'progress' => $tareasCompletadas,
+                        ];
+                    }),
+
                 TextColumn::make('municipio.departamento.Nom_Departamento')
                     ->searchable()
                     ->sortable()
@@ -299,7 +320,6 @@ class ProyectoResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('create_estimations')
                         ->label('Estimaciones')
@@ -336,9 +356,51 @@ class ProyectoResource extends Resource
                             ->send();
                         }),
 
-                        
-                       
-            
+                        Tables\Actions\Action::make('create_tareas')
+                        ->label('Tareas')
+                        ->icon('heroicon-o-plus')
+                        ->color('success')
+                        ->form([
+                            Forms\Components\TextInput::make('Descripcion')
+                            ->label('Tarea')
+                            ->required(),
+                            Forms\Components\DatePicker::make('Fecha_Inicio')
+                                ->label('Fecha de Inicio')
+                                ->required(),
+                            Forms\Components\Select::make('Responsable')
+                                ->relationship(
+                                    'persona',
+                                    'ID_Persona',
+                                    fn ($query) => $query
+                                        ->select(['ID_Persona', 'Nombres', 'Apellidos'])
+                                        ->where('Estado', 'Activo')
+                                )
+                                ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->Nombres} {$record->Apellidos}")
+                                ->label('Responsable')
+                                ->required(),
+                        ])
+                        ->action(function (array $data, $record) {
+
+                            $ID_Proyecto = $record->ID_Proyecto;
+
+                            $Estado = 0;
+
+                            Tarea::create([
+                                'Descripcion' => $data['Descripcion'], 
+                                'Fecha_Inicio' => $data['Fecha_Inicio'],
+                                'Estado' => $Estado,
+                                'Responsable' => $data['Responsable'], 
+                                'ID_Proyecto' => $ID_Proyecto, // Usando el ID del proyecto obtenido
+                            ]);
+
+                            Notification::make()
+                            ->title('Tarea creada con éxito') 
+                            ->success() 
+                            ->send();
+                        }),   
+                    
+                        Tables\Actions\DeleteAction::make(),
+
                 ]),
             ])
             ->bulkActions([
@@ -350,7 +412,7 @@ class ProyectoResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //RelationManagers\TareaRelationManager::class,
+            RelationManagers\TareaRelationManager::class,
             RelationManagers\EstimacionesRelationManager::class,
         ];
     }

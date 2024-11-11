@@ -42,9 +42,10 @@ class CreateEmpleados extends CreateRecord
         'Telefono' => $data['persona']['telefono']['Telefono'],
     ]);
 // Crear un nuevo registro en la tabla TBL_Departamento_Trabajo
-$departamentoTrabajo = DepartamentoTrabajo::create([
-    'Dep_Trabajo' => $data['departamentoTrabajo']['Dep_Trabajo'],
-]);
+$departamentoTrabajo = DepartamentoTrabajo::firstOrCreate(
+    ['Dep_Trabajo' => $data['departamentoTrabajo']['Dep_Trabajo']]
+
+);
 
 
 
@@ -67,3 +68,4 @@ $departamentoTrabajo = DepartamentoTrabajo::create([
 
 
 }
+

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Empresa;
 use App\Models\Departamentos;
 use App\Models\Municipio;
+use Carbon\Carbon; 
 
 class EditEmpresa extends EditRecord
 {
@@ -30,13 +31,19 @@ class EditEmpresa extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        // Obtener la empresa con sus relaciones
-        $empresa = $this->record;
 
+        $empresa = $this->record;
+    
         $data = [
             'RTN' => $empresa->RTN,
             'Nombre_Empresa' => $empresa->Nombre_Empresa,
-            'Fecha_Creacion' => $empresa->Fecha_Creacion,
+            'telefono' => [
+            'Telefono' => $empresa->telefono?->Telefono
+        ],
+        'correo' => [
+            'Correo' => $empresa->correo?->Correo
+        ],
+
             'direcciones' => [
                 'Nom_Direccion' => $empresa->direcciones->Nom_Direccion,
                 'Tip_Direccion' => $empresa->direcciones->Tip_Direccion,
@@ -49,17 +56,23 @@ class EditEmpresa extends EditRecord
                 ],
             ],
         ];
-
+    
         return $data;
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
+        $record->telefono->update(['Telefono' => $data['telefono']['Telefono']]);
+    $record->correo->update(['Correo' => $data['correo']['Correo']]);
+
+
         // Actualiza los campos específicos de la empresa
         $record->update([
             'RTN' => $data['RTN'],
             'Nombre_Empresa' => $data['Nombre_Empresa'],
+            'Fecha_Creacion' => $data['Fecha_Creacion'] ?? Carbon::now(), 
         ]);
+
 
         // Obtener o crear el departamento
         $departamentoName = $data['direcciones']['municipio']['departamento']['Nom_Departamento'] ?? null;
@@ -95,3 +108,4 @@ class EditEmpresa extends EditRecord
         return $this->getResource()::getUrl('index');
     }
 }
+

@@ -6,6 +6,10 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use App\Models\User; 
 use App\Models\Proyecto;
+use App\Models\Empleados;
+use App\Models\Empresa;
+
+
 
 class StatsOverview extends BaseWidget
 {

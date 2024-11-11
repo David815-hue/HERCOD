@@ -33,6 +33,7 @@ class ViewEmpleados extends ViewRecord
             'Nombres' => $empleado->persona->Nombres,
             'Apellidos' => $empleado->persona->Apellidos,
             'Genero' => $empleado->persona->Genero,
+            'Estado' => $empleado->persona->Estado,
             'telefono' => [
                 'Telefono' => $empleado->persona->telefono->Telefono
             ],

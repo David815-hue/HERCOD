@@ -18,10 +18,10 @@ class ProyectosPorDepartamentoChart extends LineChartWidget
     {
         $data = Departamentos::select(
             'TBL_Departamento.Nom_Departamento',
-            DB::raw('COALESCE(COUNT(DISTINCT tbl_proyectos.ID_Proyecto), 0) as total_proyectos')
+            DB::raw('COALESCE(COUNT(DISTINCT TBL_Proyectos.ID_Proyecto), 0) as total_proyectos')
         )
             ->leftJoin('TBL_Municipio', 'TBL_Departamento.ID_Departamento', '=', 'TBL_Municipio.ID_Departamento')
-            ->leftJoin('tbl_proyectos', 'TBL_Municipio.ID_Municipio', '=', 'tbl_proyectos.ID_Municipio')
+            ->leftJoin('TBL_Proyectos', 'TBL_Municipio.ID_Municipio', '=', 'TBL_Proyectos.ID_Municipio')
             ->groupBy('TBL_Departamento.ID_Departamento', 'TBL_Departamento.Nom_Departamento')
             ->orderBy('TBL_Departamento.Nom_Departamento')
             ->get();

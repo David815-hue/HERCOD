@@ -11,6 +11,7 @@ use App\Models\Direcciones;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Carbon\Carbon;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Section;
@@ -31,33 +32,39 @@ class EmpresaResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
+            
             ->schema([
                 Section::make('Datos Empresariales')
+                    ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('RTN')->required()->label('RTN'),
                         Forms\Components\TextInput::make('Nombre_Empresa')->required()->label('Nombre de la Empresa'),
-                        Forms\Components\DateTimePicker::make('Fecha_Creacion')->required()->label('Fecha de Creación'),
+
+                        Forms\Components\TextInput::make('telefono.Telefono')->label('Teléfono'),  // Nota el cambio aquí
+                        Forms\Components\TextInput::make('correo.Correo')->label('Correo'), 
 
                         Select::make('direcciones.municipio.departamento.Nom_Departamento')
-                            ->label('Departamento')
-                            ->options(self::getDepartamentos())
-                            ->reactive()
-                            ->afterStateUpdated(fn (callable $set) => $set('direcciones.municipio.Nom_Municipio', null)),
+                        ->label('Departamento')
+                        ->options(self::getDepartamentos())
+                       ->reactive()
+                       ->afterStateUpdated(fn (callable $set) => $set('direcciones.municipio.Nom_Municipio', null)),
 
                         Select::make('direcciones.municipio.Nom_Municipio')
-                            ->label('Municipio')
-                            ->options(function (callable $get) {
-                                $departamento = $get('direcciones.municipio.departamento.Nom_Departamento');
-                                return $departamento ? array_combine(self::getMunicipios($departamento), self::getMunicipios($departamento)) : [];
-                            })
-                            ->required(),
+                       ->label('Municipio')
+                       ->options(function (callable $get) {
+                       $departamento = $get('direcciones.municipio.departamento.Nom_Departamento');
+                       return $departamento ? array_combine(self::getMunicipios($departamento), self::getMunicipios($departamento)) : [];
+    })
+    ->required(),
 
                         Forms\Components\TextInput::make('direcciones.Nom_Direccion')->required()->label('Nombre de Dirección'),
                         Forms\Components\TextInput::make('direcciones.Tip_Direccion')->required()->label('Tipo de Dirección'),
                         Forms\Components\Textarea::make('direcciones.Descripcion')->label('Descripción'),
+            
                     ]),
             ]);
     }
+
 
     public static function table(Table $table): Table
     {
@@ -88,10 +95,15 @@ class EmpresaResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                
+                Tables\Actions\DeleteAction::make()
+                ->before(function (Empresa $record) {
+                    // Primero eliminamos todas las direcciones asociadas
+                    $record->direcciones()->delete();
+                })
 
             ]);
     }
+
 
     public static function getDepartamentos(): array
     {

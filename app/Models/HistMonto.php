@@ -28,4 +28,6 @@ class HistMonto extends Model
     {
         return $this->belongsTo(Proyecto::class, 'ID_Proyecto', 'ID_Proyecto');
     }
+
+    
 }
