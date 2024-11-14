@@ -57,9 +57,7 @@ class EmpresaResource extends Resource
     })
     ->required(),
 
-                        Forms\Components\TextInput::make('direcciones.Nom_Direccion')->required()->label('Nombre de Dirección'),
-                        Forms\Components\TextInput::make('direcciones.Tip_Direccion')->required()->label('Tipo de Dirección'),
-                        Forms\Components\Textarea::make('direcciones.Descripcion')->label('Descripción'),
+                        Forms\Components\Textarea::make('direcciones.Descripcion')->label('Direccion exacta'),
             
                     ]),
             ]);
@@ -85,12 +83,7 @@ class EmpresaResource extends Resource
                 TextColumn::make('direcciones.municipio.Nom_Municipio')
                     ->label('Municipio')
                     ->searchable(),
-                TextColumn::make('direcciones.Nom_Direccion')
-                    ->label('Dirección')
-                    ->searchable(),
-                TextColumn::make('direcciones.Tip_Direccion')
-                    ->label('Tipo de Dirección')
-                    ->searchable(),
+
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

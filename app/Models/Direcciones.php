@@ -11,9 +11,7 @@ class Direcciones extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'ID_Empresa',
-        'Nom_Direccion',
-        'Tip_Direccion',       
+        'ID_Empresa',   
         'Descripcion',
         'ID_Municipio',
     ];

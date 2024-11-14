@@ -45,8 +45,7 @@ class EditEmpresa extends EditRecord
         ],
 
             'direcciones' => [
-                'Nom_Direccion' => $empresa->direcciones->Nom_Direccion,
-                'Tip_Direccion' => $empresa->direcciones->Tip_Direccion,
+
                 'Descripcion' => $empresa->direcciones->Descripcion,
                 'municipio' => [
                     'departamento' => [
@@ -87,8 +86,7 @@ class EditEmpresa extends EditRecord
 
         // Actualizar o crear la dirección asociada
         $direccionData = [
-            'Nom_Direccion' => $data['direcciones']['Nom_Direccion'],
-            'Tip_Direccion' => $data['direcciones']['Tip_Direccion'],
+         
             'Descripcion' => $data['direcciones']['Descripcion'],
             'ID_Municipio' => $municipio->ID_Municipio, // Aquí utilizas el ID del municipio creado
         ];

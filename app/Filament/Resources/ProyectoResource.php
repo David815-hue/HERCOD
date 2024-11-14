@@ -49,114 +49,126 @@ class ProyectoResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document';
 
     public static function form(Form $form): Form
-    {
-        return $form
+{
+    return $form
         ->schema([
-            Forms\Components\TextInput::make('NumeroContrato')
-                ->label('Número de Contrato')
-                ->required()
-                ->integer()
-                ->numeric(),
-                
-            Forms\Components\TextInput::make('NumeroLicitacion')
-                ->label('Número de Licitación')
-                ->required(),
+            Forms\Components\Section::make('Datos Generales')
+                ->collapsible()
+                ->columns(2)
+                ->schema([
+                    Forms\Components\TextInput::make('NumeroContrato')
+                        ->label('Número de Contrato')
+                        ->required()
+                        ->integer()
+                        ->numeric(),
 
-            Forms\Components\TextInput::make('Nombre_Proyecto')
-                ->label('Nombre del Proyecto')
-                ->required(),
+                    Forms\Components\TextInput::make('NumeroLicitacion')
+                        ->label('Número de Licitación')
+                        ->required(),
 
-            Forms\Components\Textarea::make('Descripcion')
-                ->label('Descripción')
-                ->required(),
+                    Forms\Components\TextInput::make('Nombre_Proyecto')
+                        ->label('Nombre del Proyecto')
+                        ->required(),
 
-            Forms\Components\TextInput::make('Anticipo')
-                ->label('Anticipo')
-                ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
-                ->step(1)
-                ->numeric(),
+                    Forms\Components\Textarea::make('Descripcion')
+                        ->label('Descripción')
+                        ->required(),
 
-            Forms\Components\DatePicker::make('Fecha_FirmaContrato')
-                ->label('Fecha Firma de Contrato')
-                ->required(),
+                    Forms\Components\DatePicker::make('Fecha_FirmaContrato')
+                        ->label('Fecha Firma de Contrato')
+                        ->required(),
 
-            Forms\Components\DatePicker::make('Fecha_OrdenInicio')
-                ->label('Fecha Orden de Inicio')
-                ->required(),
+                    Forms\Components\DatePicker::make('Fecha_OrdenInicio')
+                        ->label('Fecha Orden de Inicio')
+                        ->required(),
 
-                Forms\Components\TextInput::make('Monto_Contractual')
-                ->label('Monto Contractual')
-                ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
-                ->required()
-                ->step(1)
-                ->numeric(),
+                    Forms\Components\Select::make('Estado')
+                        ->label('Estado')
+                        ->options([
+                            'Completado' => 'Completado',
+                            'En Progreso' => 'En Progreso',
+                        ])
+                        ->visible(fn($record) => $record !== null)
+                        ->required(fn($record) => $record !== null),
 
-                Forms\Components\TextInput::make('Monto_Final')
-                ->label('Monto Final')
-                ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
-                ->numeric()
-                ->step(1),
+                    Forms\Components\DatePicker::make('Fecha_Fin')
+                        ->label('Fecha de Finalización')
+                        ->nullable(),
+                ]),
+            Forms\Components\Section::make('Empresa y Encargado')
+                ->collapsible()
+                ->columns(2)
+                ->schema([
+                    Forms\Components\Select::make('ID_Empresa')
+                        ->relationship('empresa', 'Nombre_Empresa')
+                        ->label('Empresa')
+                        ->required(),
 
+                    Forms\Components\Select::make('Encargado')
+                        ->relationship(
+                            'persona',
+                            'ID_Persona',
+                            fn($query) => $query
+                                ->select(['ID_Persona', 'Nombres', 'Apellidos'])
+                                ->where('Estado', 'Activo')
+                        )
+                        ->getOptionLabelFromRecordUsing(fn($record) => "{$record->Nombres} {$record->Apellidos}")
+                        ->label('Encargado')
+                        ->required(),
+                ]),
 
-            
-            Select::make('Estado')
-                ->label('Estado')
-                ->options([
-                    'Completado' => 'Completado',
-                    'En Progreso' => 'En Progreso',
-                ])
-            ->visible(fn ($record) => $record !== null) // Solo visible al editar
-            ->required(fn ($record) => $record !== null), // Requerido solo al editar
+            Forms\Components\Section::make('Montos')
+                ->collapsible()
+                ->columns(3)
+                ->schema([
+                    Forms\Components\TextInput::make('Anticipo')
+                        ->label('Anticipo')
+                        ->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)
+                        ->step(1)
+                        ->numeric(),
 
-            Forms\Components\DatePicker::make('Fecha_Fin')
-                ->label('Fecha de Finalización')
-                ->nullable(),
+                    Forms\Components\TextInput::make('Monto_Contractual')
+                        ->label('Monto Contractual')
+                        ->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)
+                        ->required()
+                        ->step(1)
+                        ->numeric(),
 
+                    Forms\Components\TextInput::make('Monto_Final')
+                        ->label('Monto Final')
+                        ->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)
+                        ->numeric()
+                        ->step(1),
+                ]),
 
-            Forms\Components\Select::make('ID_Empresa')
-                ->relationship('empresa', 'Nombre_Empresa')
-                ->label('Empresa')
-                ->required(),
+            Forms\Components\Section::make('Ubicación')
+                ->collapsible()
+                ->columns(2)
+                ->schema([
+                    Select::make('municipio.departamento.Nom_Departamento')
+                        ->searchable()
+                        ->label('Departamento')
+                        ->options(self::getDepartamentos())
+                        ->reactive()
+                        ->afterStateUpdated(fn(callable $set) => $set('municipio.Nom_Municipio', null)),
 
-            
-            Select::make('municipio.departamento.Nom_Departamento')
-                ->label('Departamento')
-                ->options(self::getDepartamentos())
-                ->reactive()
-                ->afterStateUpdated(fn (callable $set) => $set('municipio.Nom_Municipio', null)),
-            
-            Select::make('municipio.Nom_Municipio')
-                ->label('Municipio')
-                ->required()
-                ->options(function (callable $get) {
-                    $departamento = $get('municipio.departamento.Nom_Departamento');
-                    return $departamento ? array_combine(self::getMunicipios($departamento), self::getMunicipios($departamento)) : [];
-                }),
-            
-            Forms\Components\TextInput::make('Direccion')
-                ->label('Dirección')
-                ->required(),
-            
-            Forms\Components\Select::make('Encargado')
-                ->relationship(
-                    'persona',
-                    'ID_Persona',
-                    fn ($query) => $query
-                        ->select(['ID_Persona', 'Nombres', 'Apellidos'])
-                        ->where('Estado', 'Activo')
-                )
-                ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->Nombres} {$record->Apellidos}")
-                ->label('Encargado')
-                ->required(),
+                    Select::make('municipio.Nom_Municipio')
+                        ->searchable()
+                        ->label('Municipio')
+                        ->required()
+                        ->options(function (callable $get) {
+                            $departamento = $get('municipio.departamento.Nom_Departamento');
+                            return $departamento ? array_combine(self::getMunicipios($departamento), self::getMunicipios($departamento)) : [];
+                        }),
 
-            
-           /* Forms\Components\DatePicker::make('Fecha_Creacion')
-                ->label('Fecha de Creación')
-                ->default(now())
-                ->disabled(), */
+                    Forms\Components\TextInput::make('Direccion')
+                        ->label('Dirección Exacta')
+                        ->required(),
+                ]),
+
 
         ]);
-    }
+}
 
 
 

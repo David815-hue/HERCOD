@@ -59,8 +59,6 @@ class CreateEmpresa extends CreateRecord
         // Crear la dirección, enlazando con el ID de la empresa y el ID del municipio
         Direcciones::create([
             'ID_Empresa' => $empresa->ID_Empresa,
-            'Nom_Direccion' => $this->data['direcciones']['Nom_Direccion'],
-            'Tip_Direccion' => $this->data['direcciones']['Tip_Direccion'],
             'Descripcion' => $this->data['direcciones']['Descripcion'],
             'ID_Municipio' => $municipio->ID_Municipio,
         ]);
