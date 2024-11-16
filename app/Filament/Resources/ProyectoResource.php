@@ -40,6 +40,7 @@ use IbrahimBougaoua\FilaProgress\Tables\Columns\ProgressBar;
 use IbrahimBougaoua\FilaProgress\Infolists\Components\CircleProgressEntry;
 use IbrahimBougaoua\FilaProgress\Infolists\Components\ProgressBarEntry;
 
+
 class ProyectoResource extends Resource
 {
     protected static ?string $model = Proyecto::class;
@@ -165,8 +166,6 @@ class ProyectoResource extends Resource
                         ->label('Dirección Exacta')
                         ->required(),
                 ]),
-
-
         ]);
 }
 

@@ -34,4 +34,6 @@ class ViewProyecto extends ViewRecord
     {
         $this->redirect($this->getResource()::getUrl('view', ['record' => $this->record->getKey()]));
     }
+
+    
 }

@@ -13,7 +13,6 @@ use Pelmered\FilamentMoneyField\Tables\Columns\MoneyColumn;
 
 class EstimacionesRelationManager extends RelationManager
 
-
 {
     protected static string $relationship = 'Estimaciones';
 
@@ -68,6 +67,7 @@ class EstimacionesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
+                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

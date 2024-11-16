@@ -68,6 +68,7 @@ class TareaRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
+                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -77,5 +78,6 @@ class TareaRelationManager extends RelationManager
                 
             ]);
     }
+
 }
 

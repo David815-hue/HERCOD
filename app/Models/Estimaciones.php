@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -9,13 +11,14 @@ use Illuminate\Support\Facades\Auth;
 
 class Estimaciones extends Model
 {
-    use HasFactory;
+    use HasFactory,LogsActivity;
 
     protected $table = 'TBL_Estimaciones'; //El nombre de la tabla ya creada
 
     public $timestamps = false; // Esto siempre ira
  
     protected $primaryKey = 'ID_Estimacion'; //Poner la PK
+
 
     public function proyecto() //Relacion hacia proyecto
     {
@@ -47,6 +50,10 @@ class Estimaciones extends Model
         'Descripcion'
     ];
 
+    public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
+        ->logAll()
+        ->useLogName('Actividad Estimaciones');
+    }
 
   
 }

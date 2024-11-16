@@ -2,6 +2,8 @@
 // app/Models/Persona.php
 namespace App\Models;
 
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class Persona extends Model
 {
+    use LogsActivity;
     protected $table = 'TBL_Persona';
     protected $primaryKey = 'ID_Persona';
     public $timestamps = false;
@@ -58,6 +61,11 @@ class Persona extends Model
         static::creating(function ($estimacion) {
             $estimacion->Creado_Por = Auth::user()->name;
         });
+    }
+
+    public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
+        ->logAll()
+        ->useLogName('Actividad');
     }
 
 

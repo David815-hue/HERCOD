@@ -29,7 +29,6 @@ use App\Filament\Widgets\ProyectosPorDepartamentoChart;
 
 
 
-
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -42,6 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             //->brandName('HERCOD')
             ->brandLogo(asset('images/logo.png')) //Habilitar logo
+            ->favicon(asset('images/favicon2.png'))
             ->darkModeBrandLogo(asset('images/logodark.jpg'))
             ->passwordReset()
             //->emailVerification()
@@ -58,7 +58,6 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 ProyectosPorDepartamentoChart::class,
-
                 //Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
@@ -86,7 +85,7 @@ class AdminPanelProvider extends PanelProvider
                     ->imageProvider(
                         MyImages::make()
                             ->directory('images/backgrounds')
-                    ),
+                    ), 
                 LightSwitchPlugin::make(),
                 FilamentSpatieLaravelBackupPlugin::make()
                     ->noTimeout()
@@ -101,8 +100,6 @@ class AdminPanelProvider extends PanelProvider
                 ->navigationIcon('heroicon-o-document-text')
                 ->navigationCountBadge(true)
                 ->navigationSort(2),
-
-
             ]);
     }
 }

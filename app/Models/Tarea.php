@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 class Tarea extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'TBL_Tareas';
 
@@ -64,4 +67,8 @@ class Tarea extends Model
         'Creado_Por'
     ];
     
+    public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
+        ->logAll()
+        ->useLogName('Actividad Tarea');
+    }
 }

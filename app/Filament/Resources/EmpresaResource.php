@@ -37,7 +37,9 @@ class EmpresaResource extends Resource
                 Section::make('Datos Empresariales')
                     ->columns(2)
                     ->schema([
-                        Forms\Components\TextInput::make('RTN')->required()->label('RTN'),
+                        Forms\Components\TextInput::make('RTN')->required()->label('RTN')
+                        ->numeric()
+                        ->rules(['digits:14']),
                         Forms\Components\TextInput::make('Nombre_Empresa')->required()->label('Nombre de la Empresa'),
 
                         Forms\Components\TextInput::make('telefono.Telefono')->label('Teléfono'),  // Nota el cambio aquí
@@ -70,7 +72,8 @@ class EmpresaResource extends Resource
             ->columns([
                 TextColumn::make('RTN')
                     ->label('RTN')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('Nombre_Empresa')
                     ->label('Nombre Empresa')
                     ->searchable(),

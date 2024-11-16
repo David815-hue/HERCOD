@@ -44,10 +44,12 @@ class EmpleadosResource extends Resource
 
                         TextInput::make('persona.Nombres')
                             ->required()
+                            ->rules(['regex:/^[\pL\s]+$/u'])
                             ->label('Nombres'),
 
                         TextInput::make('persona.Apellidos')
                             ->required()
+                            ->rules(['regex:/^[\pL\s]+$/u'])
                             ->label('Apellidos'),
 
                         Forms\Components\Select::make('persona.Genero')
@@ -87,7 +89,7 @@ class EmpleadosResource extends Resource
                     Section::make('Datos Laborales')
                     ->schema([
                         Select::make('departamentoTrabajo.Dep_Trabajo')
-                            ->label('Departamento')
+                            ->label('Departamento de Trabajo')
                             ->options(fn () => \App\Models\DepartamentoTrabajo::pluck('Dep_Trabajo', 'Dep_Trabajo'))
                             ->required()
                             ->createOptionForm([
@@ -147,7 +149,7 @@ class EmpleadosResource extends Resource
                     ->sortable(),
                 TextColumn::make('departamentoTrabajo.Dep_Trabajo')
                     ->toggleable()
-                    ->label('Dep_Trabajo')
+                    ->label('Departamento Trabajo')
                     ->searchable()
                     ->sortable(),
                 BadgeColumn::make('persona.Estado')
@@ -185,7 +187,7 @@ class EmpleadosResource extends Resource
                         'Activo' => 'Activo',
                         'Inactivo' => 'Inactivo',
                     ])
-                    ->attribute('persona.Estado')
+                    ->attribute('persona.Estado'),
             ]);
     }
 

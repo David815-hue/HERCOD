@@ -1,6 +1,8 @@
 <?php
 namespace App\Models;
 
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -8,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Municipio extends Model
 {
+    use LogsActivity;
     protected $table = 'TBL_Municipio';
     protected $primaryKey = 'ID_Municipio';
     public $timestamps = false;
@@ -25,5 +28,10 @@ class Municipio extends Model
     public function departamento(): BelongsTo
     {
         return $this->belongsTo(Departamentos::class, 'ID_Departamento', 'ID_Departamento');
+    }
+
+    public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
+        ->logAll()
+        ->useLogName('Actividad');
     }
 }

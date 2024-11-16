@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class Empleados extends Model
 {
-    use HasFactory;
+    use HasFactory,LogsActivity;
 
     protected $table = 'TBL_Empleados';
     protected $primaryKey = 'ID_Empleado';
@@ -46,5 +48,10 @@ class Empleados extends Model
         static::creating(function ($empleado) {
             $empleado->Creado_Por = Auth::user()->name;
         });
+    }
+
+    public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
+        ->logAll()
+        ->useLogName('Actividad');
     }
 }

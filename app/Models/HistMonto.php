@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class HistMonto extends Model
 {
+
+    use LogsActivity;
 
     protected $table = 'TBL_Hist_Monto';
 
@@ -29,5 +33,9 @@ class HistMonto extends Model
         return $this->belongsTo(Proyecto::class, 'ID_Proyecto', 'ID_Proyecto');
     }
 
+    public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
+        ->logAll()
+        ->useLogName('Actividad');
+    }
     
 }

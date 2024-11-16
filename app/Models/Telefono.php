@@ -2,6 +2,8 @@
 // app/Models/Telefono.php
 namespace App\Models;
 
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -27,5 +29,9 @@ class Telefono extends Model
         return $this->belongsTo(Empresa::class, 'ID_Empresa', 'ID_Empresa');
     }
 
+    public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
+        ->logAll()
+        ->useLogName('Actividad');
+    }
     
 }
