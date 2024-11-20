@@ -18,7 +18,11 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Tables\Columns\TextColumn;
 use ArielMejiaDev\FilamentPrintable\Actions\PrintBulkAction;
 use Filament\Notifications\Notification;
-
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction; //Para generar Excel
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
+use pxlrbt\FilamentExcel\Columns\Column;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
+use Carbon\Carbon;
 
 class UserResource extends Resource
 {
@@ -121,19 +125,59 @@ class UserResource extends Resource
                     ->label('Creación'),
             ])
             ->filters([
-                // Agrega filtros si es necesario
+                DateRangeFilter::make('fecha_creacion')
+                    ->timezone('UTC')
+                    ->minDate(Carbon::now()->subMonth())->maxDate(Carbon::now()->addMonth())
+                    ->alwaysShowCalendar(),
             ])
+            ->headerActions([
+                Tables\Actions\Action::make('Exportar PDF')
+                    ->label('PDF')
+                    ->action('exportarPDF') // Función está en ListUsers.php
+                    ->color('danger')
+                    ->icon('heroicon-o-document-text'),
+            ])
+
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('Exportar PDF')
+                    ->label('PDF')
+                    ->url(fn($record) => route('pdf.usuario', ['user' => $record->id_usuario]))
+                    ->color('danger')
+                    ->icon('heroicon-o-document-text'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    PrintBulkAction::make(),
+                    ExportBulkAction::make()->exports([
+                        ExcelExport::make('table')->fromTable()
+                            ->askForFilename() 
+                            ->askForWriterType() 
+                            ->withColumns([
+                                Column::make('name')->heading('User name'),
+                                Column::make('email')->heading('Email address'),
+                                Column::make('created_at')->heading('Creation date'),
+                                Column::make('deleted_at')->heading(('Delete date')),
+                            ]),
+
+                        ExcelExport::make('form')->fromForm()
+                            ->askForFilename()
+                            ->askForWriterType()
+                            ->withColumns([
+                                Column::make('name')->heading('User name'),
+                                Column::make('email')->heading('Email address'),
+                                Column::make('created_at')->heading('Creation date'),
+                                Column::make('deleted_at')->heading(('Delete date')),
+                            ]),
+
+                    ])
+                        ->label('Excel')
+                        ->color('success')
+                        ->icon('heroicon-o-document-text'),
                 ]),
             ]);
     }
-    
+
     public static function getPages(): array
     {
         return [

@@ -69,6 +69,7 @@ class Tarea extends Model
     
     public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
         ->logAll()
-        ->useLogName('Actividad Tarea');
+        ->useLogName('Actividad Tarea')
+        ->logOnlyDirty();
     }
 }

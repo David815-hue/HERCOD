@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\ToggleColumn;
-
-
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
+use Carbon\Carbon;
 
 class TareaRelationManager extends RelationManager
 {
@@ -65,7 +65,10 @@ class TareaRelationManager extends RelationManager
 
             ])
             ->filters([
-                //
+                DateRangeFilter::make('Fecha_Inicio')
+                ->timezone('UTC')
+                ->minDate(Carbon::now()->subMonth())->maxDate(Carbon::now()->addMonth())
+                ->alwaysShowCalendar(),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
@@ -73,6 +76,11 @@ class TareaRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make('Exportar PDF')
+                        ->url(fn($record) => route('pdf.tarea', ['tarea' => $record->ID_Tarea])) // Llama a la ruta con el ID del usuario
+                        ->label('PDF')
+                        ->icon('heroicon-o-document-text')
+                        ->color('danger'),
             ])
             ->bulkActions([
                 

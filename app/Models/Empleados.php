@@ -17,6 +17,10 @@ class Empleados extends Model
     protected $primaryKey = 'ID_Empleado';
     public $timestamps = false;
 
+    protected $casts = [
+        'Sueldo' => 'float'
+    ];
+
     protected $fillable = [
         'Cargo',
         'Sueldo',
@@ -47,11 +51,16 @@ class Empleados extends Model
         // Antes de crear un registro guardar  el usuario
         static::creating(function ($empleado) {
             $empleado->Creado_Por = Auth::user()->name;
+            activity()->disableLogging();  
         });
     }
-
+   
     public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
-        ->logAll()
-        ->useLogName('Actividad');
+        ->logOnly(attributes: ['Cargo', 'Sueldo', 'Fecha_Ingreso', 'Creado_Por'])
+        ->useLogName('Actividad Empleados')
+        ->logOnlyDirty();
     }
+    
+    
+
 }

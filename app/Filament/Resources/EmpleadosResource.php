@@ -18,7 +18,11 @@ use Filament\Tables\Columns\BadgeColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Tables\Actions\Action;
-
+use ArielMejiaDev\FilamentPrintable\Actions\PrintBulkAction;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction; //Para generar Excel
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
+use pxlrbt\FilamentExcel\Columns\Column;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 class EmpleadosResource extends Resource
 {
     protected static ?string $model = Empleados::class;
@@ -27,7 +31,7 @@ class EmpleadosResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
 
-    
+
     public static function form(Form $form): Form
     {
         return $form
@@ -56,8 +60,8 @@ class EmpleadosResource extends Resource
                             ->options([
                                 'Masculino' => 'Masculino',
                                 'Femenino' => 'Femenino',
-                                
-                                
+
+
                             ])
                             ->required(),
 
@@ -86,11 +90,11 @@ class EmpleadosResource extends Resource
                     ])->columns(2),
 
 
-                    Section::make('Datos Laborales')
+                Section::make('Datos Laborales')
                     ->schema([
                         Select::make('departamentoTrabajo.Dep_Trabajo')
                             ->label('Departamento de Trabajo')
-                            ->options(fn () => \App\Models\DepartamentoTrabajo::pluck('Dep_Trabajo', 'Dep_Trabajo'))
+                            ->options(fn() => \App\Models\DepartamentoTrabajo::pluck('Dep_Trabajo', 'Dep_Trabajo'))
                             ->required()
                             ->createOptionForm([
                                 TextInput::make('Dep_Trabajo')
@@ -104,7 +108,7 @@ class EmpleadosResource extends Resource
                                 $departamento = \App\Models\DepartamentoTrabajo::create([
                                     'Dep_Trabajo' => $data['Dep_Trabajo']
                                 ]);
-                                
+
                                 return $departamento->Dep_Trabajo;
                             })
                             ->createOptionAction(function (Forms\Components\Actions\Action $action) {
@@ -118,7 +122,7 @@ class EmpleadosResource extends Resource
 
                         Forms\Components\TextInput::make('Sueldo')
                             ->required()
-                            ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
+                            ->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)
                             ->numeric(),
 
                         Forms\Components\DatePicker::make('Fecha_Ingreso')
@@ -165,29 +169,85 @@ class EmpleadosResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('Exportar PDF')
+                    ->label('PDF')
+                    ->url(fn($record) => route('pdf.empleado', ['empleado' => $record->ID_Empleado] ))
+                    ->color('danger')
+                    ->icon('heroicon-o-document-text'),
+
                 Action::make('toggleStatus')
-                    ->label(fn ($record) => $record->persona->Estado === 'Activo' ? 'Desactivar' : 'Activar')
-                    ->icon(fn ($record) => $record->persona->Estado === 'Activo' ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
-                    ->color(fn ($record) => $record->persona->Estado === 'Activo' ? 'danger' : 'success')
+                    ->label(fn($record) => $record->persona->Estado === 'Activo' ? 'Desactivar' : 'Activar')
+                    ->icon(fn($record) => $record->persona->Estado === 'Activo' ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle')
+                    ->color(fn($record) => $record->persona->Estado === 'Activo' ? 'danger' : 'success')
                     ->action(function (Empleados $record) {
                         $newStatus = $record->persona->Estado === 'Activo' ? 'Inactivo' : 'Activo';
                         $record->persona->update(['Estado' => $newStatus]);
                     })
                     ->requiresConfirmation()
-                    ->modalHeading(fn ($record) => $record->persona->Estado === 'Activo' ? 
+                    ->modalHeading(fn($record) => $record->persona->Estado === 'Activo' ?
                         '¿Desactivar empleado?' : '¿Activar empleado?')
-                    ->modalDescription(fn ($record) => $record->persona->Estado === 'Activo' ? 
+                    ->modalDescription(fn($record) => $record->persona->Estado === 'Activo' ?
                         'El empleado será marcado como inactivo.' : 'El empleado será marcado como activo.')
-                    ->modalSubmitActionLabel(fn ($record) => $record->persona->Estado === 'Activo' ? 
+                    ->modalSubmitActionLabel(fn($record) => $record->persona->Estado === 'Activo' ?
                         'Sí, desactivar' : 'Sí, activar')
             ])
             ->filters([
+                DateRangeFilter::make('Fecha_Ingreso')
+                    ->timezone('UTC')
+                    ->minDate(Carbon::now()->subMonth())
+                    ->maxDate(Carbon::now()->addMonth())
+                    ->alwaysShowCalendar(),
+
                 Tables\Filters\SelectFilter::make('Estado')
                     ->options([
                         'Activo' => 'Activo',
                         'Inactivo' => 'Inactivo',
                     ])
-                    ->attribute('persona.Estado'),
+                    ->query(function ($query, $data) {
+                        if (isset($data['value'])) {
+                            return $query->whereHas('persona', function ($query) use ($data) {
+                                $query->whereRaw('TBL_Persona.Estado = ?', [$data['value']]);
+                            });
+                        }
+                        return $query;
+                    })
+                    ->label('Estado'),
+            ])
+            ->headerActions([
+                Tables\Actions\Action::make('Exportar PDF')
+                    ->label('PDF')
+                    ->action('exportarPDF') 
+                    ->color('danger')
+                    ->icon('heroicon-o-document-text'),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    ExportBulkAction::make()->exports([
+                        ExcelExport::make('table')->fromTable()
+                            ->askForFilename() 
+                            ->askForWriterType() // Tipos de Formatos automaticos
+                            ->withColumns([
+                                Column::make('name')->heading('User name'),
+                                Column::make('email')->heading('Email address'),
+                                Column::make('created_at')->heading('Creation date'),
+                                Column::make('deleted_at')->heading(('Delete date')),
+                            ]),
+
+                        ExcelExport::make('form')->fromForm()
+                            ->askForFilename()
+                            ->askForWriterType()
+                            ->withColumns([
+                                Column::make('name')->heading('User name'),
+                                Column::make('email')->heading('Email address'),
+                                Column::make('created_at')->heading('Creation date'),
+                                Column::make('deleted_at')->heading(('Delete date')),
+                            ]),
+
+                    ])
+                        ->label('Excel')
+                        ->color('success')
+                        ->icon('heroicon-o-document-text'),
+                ]),
             ]);
     }
 

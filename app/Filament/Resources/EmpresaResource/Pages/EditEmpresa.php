@@ -69,7 +69,6 @@ class EditEmpresa extends EditRecord
         $record->update([
             'RTN' => $data['RTN'],
             'Nombre_Empresa' => $data['Nombre_Empresa'],
-            'Fecha_Creacion' => $data['Fecha_Creacion'] ?? Carbon::now(), 
         ]);
 
 

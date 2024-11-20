@@ -20,7 +20,14 @@ class Proyecto extends Model
 
     protected $primaryKey = 'ID_Proyecto';
 
+    protected $casts = [
+        
+        'Monto_Final' => 'float',
+        'Monto_Contractual' => 'float',
+        'Anticipo' => 'float',
+    ];
 
+    
 
     protected $fillable = [
         'NumeroContrato',
@@ -104,7 +111,8 @@ class Proyecto extends Model
 
     public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
         ->logAll()
-        ->useLogName('Actividad Proyecto');
+        ->useLogName('Actividad Proyecto')
+        ->logOnlyDirty();
     }
     
 }

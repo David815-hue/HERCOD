@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -11,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class DepartamentoTrabajo extends Model
 {
 
-    use LogsActivity;
     protected $table = 'TBL_Departamento_Trabajo'; // Nombre correcto de la tabla
     protected $primaryKey = 'ID_Departamento_trabajo';
     public $timestamps = false;
@@ -27,8 +25,4 @@ class DepartamentoTrabajo extends Model
         return $this->hasMany(Empleados::class, 'ID_Departamento_trabajo', 'ID_Departamento_trabajo');
     }
 
-    public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
-        ->logAll()
-        ->useLogName('Actividad');
-    }
 }

@@ -2,12 +2,12 @@
 // app/Models/Persona.php
 namespace App\Models;
 
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Persona extends Model
 {
@@ -64,10 +64,9 @@ class Persona extends Model
     }
 
     public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
+        ->useLogName(logName: 'Actividad Empleado')
         ->logAll()
-        ->useLogName('Actividad');
-    }
-
-
+        ->logOnlyDirty();
+        }
   
 }

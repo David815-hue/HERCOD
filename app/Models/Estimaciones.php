@@ -19,6 +19,9 @@ class Estimaciones extends Model
  
     protected $primaryKey = 'ID_Estimacion'; //Poner la PK
 
+    protected $casts = [
+        'Estimacion' => 'float',
+    ];
 
     public function proyecto() //Relacion hacia proyecto
     {
@@ -52,7 +55,8 @@ class Estimaciones extends Model
 
     public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
         ->logAll()
-        ->useLogName('Actividad Estimaciones');
+        ->useLogName('Actividad Estimaciones')
+        ->logOnlyDirty();
     }
 
   

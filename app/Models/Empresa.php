@@ -71,8 +71,6 @@ class Empresa extends Model
         static::creating(function ($empresa) {
             $empresa->Creado_Por = Auth::user()->username;
             $empresa->Fecha_Creacion = now();
-            
-
         });
     }
 
@@ -83,7 +81,8 @@ class Empresa extends Model
 
     public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
         ->logAll()
-        ->useLogName('Actividad');
+        ->useLogName('Actividad Empresa')
+        ->logOnlyDirty();
     }
 }
 

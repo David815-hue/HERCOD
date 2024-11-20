@@ -40,6 +40,11 @@ use IbrahimBougaoua\FilaProgress\Tables\Columns\ProgressBar;
 use IbrahimBougaoua\FilaProgress\Infolists\Components\CircleProgressEntry;
 use IbrahimBougaoua\FilaProgress\Infolists\Components\ProgressBarEntry;
 
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction; //Para generar Excel
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
+use pxlrbt\FilamentExcel\Columns\Column;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
+use Carbon\Carbon;
 
 class ProyectoResource extends Resource
 {
@@ -50,228 +55,228 @@ class ProyectoResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document';
 
     public static function form(Form $form): Form
-{
-    return $form
-        ->schema([
-            Forms\Components\Section::make('Datos Generales')
-                ->collapsible()
-                ->columns(2)
-                ->schema([
-                    Forms\Components\TextInput::make('NumeroContrato')
-                        ->label('Número de Contrato')
-                        ->required()
-                        ->integer()
-                        ->numeric(),
+    {
+        return $form
+            ->schema([
+                Forms\Components\Section::make('Datos Generales')
+                    ->collapsible()
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('NumeroContrato')
+                            ->label('Número de Contrato')
+                            ->required()
+                            ->integer()
+                            ->numeric(),
 
-                    Forms\Components\TextInput::make('NumeroLicitacion')
-                        ->label('Número de Licitación')
-                        ->required(),
+                        Forms\Components\TextInput::make('NumeroLicitacion')
+                            ->label('Número de Licitación')
+                            ->required(),
 
-                    Forms\Components\TextInput::make('Nombre_Proyecto')
-                        ->label('Nombre del Proyecto')
-                        ->required(),
+                        Forms\Components\TextInput::make('Nombre_Proyecto')
+                            ->label('Nombre del Proyecto')
+                            ->required(),
 
-                    Forms\Components\Textarea::make('Descripcion')
-                        ->label('Descripción')
-                        ->required(),
+                        Forms\Components\Textarea::make('Descripcion')
+                            ->label('Descripción')
+                            ->required(),
 
-                    Forms\Components\DatePicker::make('Fecha_FirmaContrato')
-                        ->label('Fecha Firma de Contrato')
-                        ->required(),
+                        Forms\Components\DatePicker::make('Fecha_FirmaContrato')
+                            ->label('Fecha Firma de Contrato')
+                            ->required(),
 
-                    Forms\Components\DatePicker::make('Fecha_OrdenInicio')
-                        ->label('Fecha Orden de Inicio')
-                        ->required(),
+                        Forms\Components\DatePicker::make('Fecha_OrdenInicio')
+                            ->label('Fecha Orden de Inicio')
+                            ->required(),
 
-                    Forms\Components\Select::make('Estado')
-                        ->label('Estado')
-                        ->options([
-                            'Completado' => 'Completado',
-                            'En Progreso' => 'En Progreso',
-                        ])
-                        ->visible(fn($record) => $record !== null)
-                        ->required(fn($record) => $record !== null),
+                        Forms\Components\Select::make('Estado')
+                            ->label('Estado')
+                            ->options([
+                                'Completado' => 'Completado',
+                                'En Progreso' => 'En Progreso',
+                            ])
+                            ->visible(fn($record) => $record !== null)
+                            ->required(fn($record) => $record !== null),
 
-                    Forms\Components\DatePicker::make('Fecha_Fin')
-                        ->label('Fecha de Finalización')
-                        ->nullable(),
-                ]),
-            Forms\Components\Section::make('Empresa y Encargado')
-                ->collapsible()
-                ->columns(2)
-                ->schema([
-                    Forms\Components\Select::make('ID_Empresa')
-                        ->relationship('empresa', 'Nombre_Empresa')
-                        ->label('Empresa')
-                        ->required(),
+                        Forms\Components\DatePicker::make('Fecha_Fin')
+                            ->label('Fecha de Finalización')
+                            ->nullable(),
+                    ]),
+                Forms\Components\Section::make('Empresa y Encargado')
+                    ->collapsible()
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\Select::make('ID_Empresa')
+                            ->relationship('empresa', 'Nombre_Empresa')
+                            ->label('Empresa')
+                            ->required(),
 
-                    Forms\Components\Select::make('Encargado')
-                        ->relationship(
-                            'persona',
-                            'ID_Persona',
-                            fn($query) => $query
-                                ->select(['ID_Persona', 'Nombres', 'Apellidos'])
-                                ->where('Estado', 'Activo')
-                        )
-                        ->getOptionLabelFromRecordUsing(fn($record) => "{$record->Nombres} {$record->Apellidos}")
-                        ->label('Encargado')
-                        ->required(),
-                ]),
+                        Forms\Components\Select::make('Encargado')
+                            ->relationship(
+                                'persona',
+                                'ID_Persona',
+                                fn($query) => $query
+                                    ->select(['ID_Persona', 'Nombres', 'Apellidos'])
+                                    ->where('Estado', 'Activo')
+                            )
+                            ->getOptionLabelFromRecordUsing(fn($record) => "{$record->Nombres} {$record->Apellidos}")
+                            ->label(label: 'Encargado')
+                            ->required(),
+                    ]),
 
-            Forms\Components\Section::make('Montos')
-                ->collapsible()
-                ->columns(3)
-                ->schema([
-                    Forms\Components\TextInput::make('Anticipo')
-                        ->label('Anticipo')
-                        ->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)
-                        ->step(1)
-                        ->numeric(),
+                Forms\Components\Section::make('Montos')
+                    ->collapsible()
+                    ->columns(3)
+                    ->schema([
+                        Forms\Components\TextInput::make('Anticipo')
+                            ->label('Anticipo')
+                            ->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)
+                            ->step(1)
+                            ->numeric(),
 
-                    Forms\Components\TextInput::make('Monto_Contractual')
-                        ->label('Monto Contractual')
-                        ->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)
-                        ->required()
-                        ->step(1)
-                        ->numeric(),
+                        Forms\Components\TextInput::make('Monto_Contractual')
+                            ->label('Monto Contractual')
+                            ->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)
+                            ->required()
+                            ->step(1)
+                            ->numeric(),
 
-                    Forms\Components\TextInput::make('Monto_Final')
-                        ->label('Monto Final')
-                        ->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)
-                        ->numeric()
-                        ->step(1),
-                ]),
+                        Forms\Components\TextInput::make('Monto_Final')
+                            ->label('Monto Final')
+                            ->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)
+                            ->numeric()
+                            ->step(1),
+                    ]),
 
-            Forms\Components\Section::make('Ubicación')
-                ->collapsible()
-                ->columns(2)
-                ->schema([
-                    Select::make('municipio.departamento.Nom_Departamento')
-                        ->searchable()
-                        ->label('Departamento')
-                        ->options(self::getDepartamentos())
-                        ->reactive()
-                        ->afterStateUpdated(fn(callable $set) => $set('municipio.Nom_Municipio', null)),
+                Forms\Components\Section::make('Ubicación')
+                    ->collapsible()
+                    ->columns(2)
+                    ->schema([
+                        Select::make('municipio.departamento.Nom_Departamento')
+                            ->searchable()
+                            ->label('Departamento')
+                            ->options(self::getDepartamentos())
+                            ->reactive()
+                            ->afterStateUpdated(fn(callable $set) => $set('municipio.Nom_Municipio', null)),
 
-                    Select::make('municipio.Nom_Municipio')
-                        ->searchable()
-                        ->label('Municipio')
-                        ->required()
-                        ->options(function (callable $get) {
-                            $departamento = $get('municipio.departamento.Nom_Departamento');
-                            return $departamento ? array_combine(self::getMunicipios($departamento), self::getMunicipios($departamento)) : [];
-                        }),
+                        Select::make('municipio.Nom_Municipio')
+                            ->searchable()
+                            ->label('Municipio')
+                            ->required()
+                            ->options(function (callable $get) {
+                                $departamento = $get('municipio.departamento.Nom_Departamento');
+                                return $departamento ? array_combine(self::getMunicipios($departamento), self::getMunicipios($departamento)) : [];
+                            }),
 
-                    Forms\Components\TextInput::make('Direccion')
-                        ->label('Dirección Exacta')
-                        ->required(),
-                ]),
-        ]);
-}
+                        Forms\Components\TextInput::make('Direccion')
+                            ->label('Dirección Exacta')
+                            ->required(),
+                    ]),
+            ]);
+    }
 
 
 
     public static function infolist(Infolist $infolist): infolist
     {
         return $infolist
-        ->schema([
-            Section::make('Informacion General')
-            ->collapsible()
-            ->columns(3)
             ->schema([
-                TextEntry::make('Nombre_Proyecto')
-                ->label('Nombre Proyecto')
-                ->color('warning'),
-                TextEntry::make('NumeroContrato')
-                ->label('Numero de Contrato'),
-                TextEntry::make('NumeroLicitacion')
-                ->label('Numero de Licitacion'),
-                TextEntry::make('empresa.Nombre_Empresa')
-                ->label('Empresa'),
-                TextEntry::make('Descripcion')
-                ->label('Descripcion'),
-                TextEntry::make('Fecha_FirmaContrato')
-                ->label('Fecha Firma de Contrato'),
-                TextEntry::make('Fecha_OrdenInicio')
-                ->label('Fecha Orden de Inicio'),
-                TextEntry::make('Fecha_Fin')
-                ->label('Fecha Finalizacion'),
-                
-                TextEntry::make('Estado')
-                ->label('Estado')
-                ->badge()
-                ->color(fn (string $state): string => match ($state) {
-                    'En Progreso' => 'warning',
-                    'Completado' => 'success',
-                    default => 'gray'
-                }),
-                TextEntry::make('persona')
-                ->label('Encargado')
-                ->formatStateUsing(fn ($state) => "{$state->Nombres} {$state->Apellidos}"),
-                TextEntry::make('Creado_Por')
-                ->label('Usuario Creacion'),
-                TextEntry::make('Fecha_Creacion')
-                ->label('Fecha Creacion'),
-                TextEntry::make('Modificado_Por')
-                ->label('Usuario Modificacion'),
-                TextEntry::make('Fecha_Modificacion')
-                ->label('Fecha Modificacion'),
-                ProgressBarEntry::make('circle')
-                    ->label('Progreso')
-                    ->getStateUsing(function (Proyecto $record) {
-                        $totalTareas = $record->Tarea()->count();
-                        $tareasCompletadas = $record->Tarea()->where('Estado', true)->count();
-                        return [
-                            'total' => $totalTareas,
-                            'progress' => $tareasCompletadas,
-                        ];
-                    }),
+                Section::make('Informacion General')
+                    ->collapsible()
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make('Nombre_Proyecto')
+                            ->label('Nombre Proyecto')
+                            ->color('warning'),
+                        TextEntry::make('NumeroContrato')
+                            ->label('Numero de Contrato'),
+                        TextEntry::make('NumeroLicitacion')
+                            ->label('Numero de Licitacion'),
+                        TextEntry::make('empresa.Nombre_Empresa')
+                            ->label('Empresa'),
+                        TextEntry::make('Descripcion')
+                            ->label('Descripcion'),
+                        TextEntry::make('Fecha_FirmaContrato')
+                            ->label('Fecha Firma de Contrato'),
+                        TextEntry::make('Fecha_OrdenInicio')
+                            ->label('Fecha Orden de Inicio'),
+                        TextEntry::make('Fecha_Fin')
+                            ->label('Fecha Finalizacion'),
 
-            ]),
-        
-            Section::make('Ubicacion Proyecto')
-            ->collapsible()
-            ->columns(3)
-            ->schema([
-                TextEntry::make('Direccion')
-                ->label('Direccion'),
-                TextEntry::make('municipio.departamento.Nom_Departamento')
-                ->label('Departamento'),
-                TextEntry::make('municipio.Nom_Municipio')
-                ->label('Municipio'),
+                        TextEntry::make('Estado')
+                            ->label('Estado')
+                            ->badge()
+                            ->color(fn(string $state): string => match ($state) {
+                                'En Progreso' => 'warning',
+                                'Completado' => 'success',
+                                default => 'gray'
+                            }),
+                        TextEntry::make('persona')
+                            ->label('Encargado')
+                            ->formatStateUsing(fn($state) => "{$state->Nombres} {$state->Apellidos}"),
+                        TextEntry::make('Creado_Por')
+                            ->label('Usuario Creacion'),
+                        TextEntry::make('Fecha_Creacion')
+                            ->label('Fecha Creacion'),
+                        TextEntry::make('Modificado_Por')
+                            ->label('Usuario Modificacion'),
+                        TextEntry::make('Fecha_Modificacion')
+                            ->label('Fecha Modificacion'),
+                        ProgressBarEntry::make('circle')
+                            ->label('Progreso')
+                            ->getStateUsing(function (Proyecto $record) {
+                                $totalTareas = $record->Tarea()->count();
+                                $tareasCompletadas = $record->Tarea()->where('Estado', true)->count();
+                                return [
+                                    'total' => $totalTareas,
+                                    'progress' => $tareasCompletadas,
+                                ];
+                            }),
 
-            ]),
+                    ]),
 
-            Section::make('Montos')
-            ->collapsible()
-            ->columns(3)
-            ->schema([
-                TextEntry::make('Anticipo')
-                ->money('hnl')
-                ->label('Anticipo'),
-                TextEntry::make('Monto_Contractual')
-                ->money('hnl')
-                ->label('Monto Contractual'),
-                TextEntry::make('Monto_Final')
-                ->money('hnl')
-                ->label('Monto Final'),
-            ]),
+                Section::make('Ubicacion Proyecto')
+                    ->collapsible()
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make('Direccion')
+                            ->label('Direccion'),
+                        TextEntry::make('municipio.departamento.Nom_Departamento')
+                            ->label('Departamento'),
+                        TextEntry::make('municipio.Nom_Municipio')
+                            ->label('Municipio'),
 
-            Section::make('Historial de Montos')
-            ->description('Historial de Cambios en los Montos')
-            ->collapsed()
-            ->schema([
-                ViewEntry::make('view_historial_montos')
-                    ->view('hist_monto') // La vista que mostrarás
-                    ->extraAttributes(['class' => 'col-span-full'])
-            ]),
-                         
-        ]);
+                    ]),
+
+                Section::make('Montos')
+                    ->collapsible()
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make('Anticipo')
+                            ->money('hnl')
+                            ->label('Anticipo'),
+                        TextEntry::make('Monto_Contractual')
+                            ->money('hnl')
+                            ->label('Monto Contractual'),
+                        TextEntry::make('Monto_Final')
+                            ->money('hnl')
+                            ->label('Monto Final'),
+                    ]),
+
+                Section::make('Historial de Montos')
+                    ->description('Historial de Cambios en los Montos')
+                    ->collapsed()
+                    ->schema([
+                        ViewEntry::make('view_historial_montos')
+                            ->view('hist_monto') // La vista que mostrarás
+                            ->extraAttributes(['class' => 'col-span-full'])
+                    ]),
+
+            ]);
     }
 
 
 
-    
+
     public static function table(Table $table): Table
     {
         return $table
@@ -285,17 +290,17 @@ class ProyectoResource extends Resource
                     ->searchable()
                     ->label('Nombre del Proyecto')
                     ->sortable(),
-                
+
                 BadgeColumn::make('Estado')
                     ->colors([
                         'danger' => 'Cancelado',
                         'warning' => 'En Progreso',
                         'success' => 'Completado'
                     ]),
-                    
+
                 TextColumn::make('persona')
                     ->label('Encargado')
-                    ->formatStateUsing(fn ($state) => "{$state->Nombres} {$state->Apellidos}")
+                    ->formatStateUsing(callback: fn($state) => "{$state->Nombres} {$state->Apellidos}")
                     ->toggleable(),
                 CircleProgress::make('circle')
                     ->label('Progreso')
@@ -314,24 +319,38 @@ class ProyectoResource extends Resource
                     ->sortable()
                     ->toggleable()
                     ->label('Departamento'),
-                
-                    
+
+
             ])
             ->defaultSort('Fecha_Creacion', 'desc')
             ->filters([
+                DateRangeFilter::make('Fecha_Creacion')
+                    ->timezone('UTC')
+                    ->minDate(Carbon::now()->subMonth())->maxDate(Carbon::now()->addMonth())
+                    ->alwaysShowCalendar(),
                 SelectFilter::make('Estado')
                     ->label('Estado')
                     ->options([
                         'En progreso' => 'En progreso',
                         'Completado' => 'Completado',
                     ]),
-                    
-               
+            ])
+            ->headerActions([
+                Tables\Actions\Action::make('Exportar PDF')
+                    ->label('Exportar PDF')
+                    ->action('exportarPDF') // Función está en ListReporteProyectos.pho
+                    ->color('danger')
+                    ->icon('heroicon-o-document-text'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('Exportar PDF')
+                        ->url(fn($record) => route('pdf.proyecto', ['proyecto' => $record->ID_Proyecto])) // Llama a la ruta con el ID del usuario
+                        ->label('PDF')
+                        ->color('danger')
+                        ->icon('heroicon-o-document-text'),
                     Tables\Actions\Action::make('create_estimations')
                         ->label('Estimaciones')
                         ->icon('heroicon-o-plus')
@@ -339,7 +358,7 @@ class ProyectoResource extends Resource
                         ->form([
                             TextInput::make('monto')
                                 ->label('Monto')
-                                ->currencyMask(thousandSeparator: ',',decimalSeparator: '.',precision: 2)
+                                ->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)
                                 ->required(),
                             Forms\Components\TextInput::make('Descripcion')
                                 ->label('Descripcion'),
@@ -354,27 +373,27 @@ class ProyectoResource extends Resource
                             $ID_Proyecto = $record->ID_Proyecto;
 
                             Estimaciones::create([
-                                'Estimacion' => $data['monto'], 
+                                'Estimacion' => $data['monto'],
                                 'Descripcion' => $data['Descripcion'],
                                 'Fecha_Estimacion' => $data['fecha'],
-                                'Fecha_Subsanacion' => $data['fecha_subsanacion'] ?? null, 
+                                'Fecha_Subsanacion' => $data['fecha_subsanacion'] ?? null,
                                 'ID_Proyecto' => $ID_Proyecto, // Usando el ID del proyecto obtenido
                             ]);
 
                             Notification::make()
-                            ->title('Estimación creada con éxito') 
-                            ->success() 
-                            ->send();
+                                ->title('Estimación creada con éxito')
+                                ->success()
+                                ->send();
                         }),
 
-                        Tables\Actions\Action::make('create_tareas')
+                    Tables\Actions\Action::make('create_tareas')
                         ->label('Tareas')
                         ->icon('heroicon-o-plus')
                         ->color('success')
                         ->form([
                             Forms\Components\TextInput::make('Descripcion')
-                            ->label('Tarea')
-                            ->required(),
+                                ->label('Tarea')
+                                ->required(),
                             Forms\Components\DatePicker::make('Fecha_Inicio')
                                 ->label('Fecha de Inicio')
                                 ->required(),
@@ -382,11 +401,11 @@ class ProyectoResource extends Resource
                                 ->relationship(
                                     'persona',
                                     'ID_Persona',
-                                    fn ($query) => $query
+                                    fn($query) => $query
                                         ->select(['ID_Persona', 'Nombres', 'Apellidos'])
                                         ->where('Estado', 'Activo')
                                 )
-                                ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->Nombres} {$record->Apellidos}")
+                                ->getOptionLabelFromRecordUsing(fn($record) => "{$record->Nombres} {$record->Apellidos}")
                                 ->label('Responsable')
                                 ->required(),
                         ])
@@ -397,25 +416,51 @@ class ProyectoResource extends Resource
                             $Estado = 0;
 
                             Tarea::create([
-                                'Descripcion' => $data['Descripcion'], 
+                                'Descripcion' => $data['Descripcion'],
                                 'Fecha_Inicio' => $data['Fecha_Inicio'],
                                 'Estado' => $Estado,
-                                'Responsable' => $data['Responsable'], 
+                                'Responsable' => $data['Responsable'],
                                 'ID_Proyecto' => $ID_Proyecto, // Usando el ID del proyecto obtenido
                             ]);
 
                             Notification::make()
-                            ->title('Tarea creada con éxito') 
-                            ->success() 
-                            ->send();
-                        }),   
-                    
-                        Tables\Actions\DeleteAction::make(),
+                                ->title('Tarea creada con éxito')
+                                ->success()
+                                ->send();
+                        }),
+
+                    Tables\Actions\DeleteAction::make(),
 
                 ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()->exports([
+                        ExcelExport::make('table')->fromTable()
+                            ->askForFilename() //Nombre manual
+                            ->askForWriterType() // Tipos de Formatos automaticos
+                            ->withColumns([
+                                Column::make('name')->heading('User name'),
+                                Column::make('email')->heading('Email address'),
+                                Column::make('created_at')->heading('Creation date'),
+                                Column::make('deleted_at')->heading(('Delete date')),
+                            ]),
+
+                        ExcelExport::make('form')->fromForm()
+                            ->askForFilename()
+                            ->askForWriterType()
+                            ->withColumns([
+                                Column::make('name')->heading('User name'),
+                                Column::make('email')->heading('Email address'),
+                                Column::make('created_at')->heading('Creation date'),
+                                Column::make('deleted_at')->heading(('Delete date')),
+                            ]),
+
+                    ])
+                        ->label('Excel')
+                        ->color('success')
+                        ->icon('heroicon-o-document-text'),
                 ]),
             ]);
     }
@@ -435,7 +480,7 @@ class ProyectoResource extends Resource
             'create' => Pages\CreateProyecto::route('/create'),
             'edit' => Pages\EditProyecto::route('/{record}/edit'),
             'view' => Pages\ViewProyecto::route('/{record}'),
-            
+
         ];
     }
 
@@ -469,93 +514,338 @@ class ProyectoResource extends Resource
     {
         $municipios = [
             'Atlántida' => [
-                'La Ceiba', 'El Porvenir', 'Esparta', 'Jutiapa', 'La Masica', 'San Francisco', 'Tela', 'Arizona'
+                'La Ceiba',
+                'El Porvenir',
+                'Esparta',
+                'Jutiapa',
+                'La Masica',
+                'San Francisco',
+                'Tela',
+                'Arizona'
             ],
             'Colón' => [
-                'Trujillo', 'Balfate', 'Iriona', 'Limón', 'Sabá', 'Santa Fe', 'Santa Rosa de Aguán', 'Sonaguera', 'Tocoa', 'Bonito Oriental'
+                'Trujillo',
+                'Balfate',
+                'Iriona',
+                'Limón',
+                'Sabá',
+                'Santa Fe',
+                'Santa Rosa de Aguán',
+                'Sonaguera',
+                'Tocoa',
+                'Bonito Oriental'
             ],
             'Comayagua' => [
-                'Comayagua', 'Ajuterique', 'El Rosario', 'Esquías', 'Humuya', 'La Libertad', 'Lamaní', 'La Trinidad', 
-                'Lejamani', 'Meámbar', 'Minas de Oro', 'Ojos de Agua', 'San Jerónimo', 'San José de Comayagua', 
-                'San José del Potrero', 'Siguatepeque', 'Villa de San Antonio', 'Las Lajas', 'Taulabé'
+                'Comayagua',
+                'Ajuterique',
+                'El Rosario',
+                'Esquías',
+                'Humuya',
+                'La Libertad',
+                'Lamaní',
+                'La Trinidad',
+                'Lejamani',
+                'Meámbar',
+                'Minas de Oro',
+                'Ojos de Agua',
+                'San Jerónimo',
+                'San José de Comayagua',
+                'San José del Potrero',
+                'Siguatepeque',
+                'Villa de San Antonio',
+                'Las Lajas',
+                'Taulabé'
             ],
             'Copán' => [
-                'Santa Rosa de Copán', 'Cabañas', 'Concepción', 'Copán Ruinas', 'Corquín', 'Cucuyagua', 'Dolores', 
-                'Dulce Nombre', 'El Paraíso', 'Florida', 'La Jigua', 'La Unión', 'Nueva Arcadia', 'San Agustín', 
-                'San Antonio', 'San Jerónimo', 'San José', 'San Juan de Opoa', 'San Nicolás', 'San Pedro', 
-                'Santa Rita', 'Trinidad de Copán', 'Veracruz'
+                'Santa Rosa de Copán',
+                'Cabañas',
+                'Concepción',
+                'Copán Ruinas',
+                'Corquín',
+                'Cucuyagua',
+                'Dolores',
+                'Dulce Nombre',
+                'El Paraíso',
+                'Florida',
+                'La Jigua',
+                'La Unión',
+                'Nueva Arcadia',
+                'San Agustín',
+                'San Antonio',
+                'San Jerónimo',
+                'San José',
+                'San Juan de Opoa',
+                'San Nicolás',
+                'San Pedro',
+                'Santa Rita',
+                'Trinidad de Copán',
+                'Veracruz'
             ],
             'Cortés' => [
-                'San Pedro Sula', 'Choloma', 'Omoa', 'Pimienta', 'Potrerillos', 'Puerto Cortés', 'San Antonio de Cortés', 
-                'San Francisco de Yojoa', 'San Manuel', 'Santa Cruz de Yojoa', 'Villanueva', 'La Lima'
+                'San Pedro Sula',
+                'Choloma',
+                'Omoa',
+                'Pimienta',
+                'Potrerillos',
+                'Puerto Cortés',
+                'San Antonio de Cortés',
+                'San Francisco de Yojoa',
+                'San Manuel',
+                'Santa Cruz de Yojoa',
+                'Villanueva',
+                'La Lima'
             ],
             'Choluteca' => [
-                'Choluteca', 'Apacilagua', 'Concepción de María', 'Duyure', 'El Corpus', 'El Triunfo', 'Marcovia', 
-                'Morolica', 'Namasigüe', 'Orocuina', 'Pespire', 'San Antonio de Flores', 'San Isidro', 'San José', 
-                'San Marcos de Colón', 'Santa Ana de Yusguare'
+                'Choluteca',
+                'Apacilagua',
+                'Concepción de María',
+                'Duyure',
+                'El Corpus',
+                'El Triunfo',
+                'Marcovia',
+                'Morolica',
+                'Namasigüe',
+                'Orocuina',
+                'Pespire',
+                'San Antonio de Flores',
+                'San Isidro',
+                'San José',
+                'San Marcos de Colón',
+                'Santa Ana de Yusguare'
             ],
             'El Paraíso' => [
-                'Yuscarán', 'Alauca', 'Danlí', 'El Paraíso', 'Güinope', 'Jacaleapa', 'Liure', 'Morocelí', 'Oropolí', 
-                'Potrerillos', 'San Antonio de Flores', 'San Lucas', 'San Matías', 'Soledad', 'Teupasenti', 'Texiguat', 
-                'Vado Ancho', 'Yauyupe', 'Trojes'
+                'Yuscarán',
+                'Alauca',
+                'Danlí',
+                'El Paraíso',
+                'Güinope',
+                'Jacaleapa',
+                'Liure',
+                'Morocelí',
+                'Oropolí',
+                'Potrerillos',
+                'San Antonio de Flores',
+                'San Lucas',
+                'San Matías',
+                'Soledad',
+                'Teupasenti',
+                'Texiguat',
+                'Vado Ancho',
+                'Yauyupe',
+                'Trojes'
             ],
             'Francisco Morazán' => [
-                'Tegucigalpa', 'Alubarén', 'Cedros', 'Curarén', 'El Porvenir', 'Guaimaca', 'La Libertad', 
-                'La Venta', 'Lepaterique', 'Maraita', 'Marale', 'Nueva Armenia', 'Ojojona', 'Orica', 'Reitoca', 
-                'Sabana Grande', 'San Antonio de Oriente', 'San Buenaventura', 'San Ignacio', 'San Juan de Flores', 
-                'San Miguelito', 'Santa Ana', 'Santa Lucía', 'Talanga', 'Tatumbla', 'Valle de Ángeles', 'Villa de San Francisco', 'Vallecillo'
+                'Tegucigalpa',
+                'Alubarén',
+                'Cedros',
+                'Curarén',
+                'El Porvenir',
+                'Guaimaca',
+                'La Libertad',
+                'La Venta',
+                'Lepaterique',
+                'Maraita',
+                'Marale',
+                'Nueva Armenia',
+                'Ojojona',
+                'Orica',
+                'Reitoca',
+                'Sabana Grande',
+                'San Antonio de Oriente',
+                'San Buenaventura',
+                'San Ignacio',
+                'San Juan de Flores',
+                'San Miguelito',
+                'Santa Ana',
+                'Santa Lucía',
+                'Talanga',
+                'Tatumbla',
+                'Valle de Ángeles',
+                'Villa de San Francisco',
+                'Vallecillo'
             ],
             'Gracias a Dios' => [
-                'Puerto Lempira', 'Brus Laguna', 'Ahuas', 'Juan Francisco Bulnes', 'Ramón Villeda Morales', 'Wampusirpi'
+                'Puerto Lempira',
+                'Brus Laguna',
+                'Ahuas',
+                'Juan Francisco Bulnes',
+                'Ramón Villeda Morales',
+                'Wampusirpi'
             ],
             'Intibucá' => [
-                'La Esperanza', 'Camasca', 'Colomoncagua', 'Concepción', 'Dolores', 'Intibucá', 'Jesús de Otoro', 
-                'Magdalena', 'Masaguara', 'San Antonio', 'San Isidro', 'San Juan', 'San Marcos de la Sierra', 
-                'San Miguel Guancapla', 'Santa Lucía', 'Yamaranguila'
+                'La Esperanza',
+                'Camasca',
+                'Colomoncagua',
+                'Concepción',
+                'Dolores',
+                'Intibucá',
+                'Jesús de Otoro',
+                'Magdalena',
+                'Masaguara',
+                'San Antonio',
+                'San Isidro',
+                'San Juan',
+                'San Marcos de la Sierra',
+                'San Miguel Guancapla',
+                'Santa Lucía',
+                'Yamaranguila'
             ],
             'Islas de la Bahía' => [
-                'Roatán', 'Guanaja', 'José Santos Guardiola', 'Utila'
+                'Roatán',
+                'Guanaja',
+                'José Santos Guardiola',
+                'Utila'
             ],
             'La Paz' => [
-                'La Paz', 'Aguanqueterique', 'Cabañas', 'Cane', 'Chinacla', 'Guajiquiro', 'Lauterique', 'Marcala', 
-                'Mercedes de Oriente', 'Opatoro', 'San Antonio del Norte', 'San José', 'San Juan', 'San Pedro de Tutule', 
-                'Santa Ana', 'Santa Elena', 'Santa María', 'Santiago de Puringla', 'Yarula'
+                'La Paz',
+                'Aguanqueterique',
+                'Cabañas',
+                'Cane',
+                'Chinacla',
+                'Guajiquiro',
+                'Lauterique',
+                'Marcala',
+                'Mercedes de Oriente',
+                'Opatoro',
+                'San Antonio del Norte',
+                'San José',
+                'San Juan',
+                'San Pedro de Tutule',
+                'Santa Ana',
+                'Santa Elena',
+                'Santa María',
+                'Santiago de Puringla',
+                'Yarula'
             ],
             'Lempira' => [
-                'Gracias', 'Belén', 'Candelaria', 'Cololaca', 'Erandique', 'Gualcince', 'Guarita', 'La Campa', 
-                'La Iguala', 'Las Flores', 'La Unión', 'La Virtud', 'Lepaera', 'Mapulaca', 'Piraera', 'San Andrés', 
-                'San Francisco', 'San Juan Guarita', 'San Manuel Colohete', 'San Rafael', 'San Sebastián', 
-                'Santa Cruz', 'Talgua', 'Tambla', 'Tomalá', 'Valladolid', 'Virginia', 'San Marcos de Caiquín'
+                'Gracias',
+                'Belén',
+                'Candelaria',
+                'Cololaca',
+                'Erandique',
+                'Gualcince',
+                'Guarita',
+                'La Campa',
+                'La Iguala',
+                'Las Flores',
+                'La Unión',
+                'La Virtud',
+                'Lepaera',
+                'Mapulaca',
+                'Piraera',
+                'San Andrés',
+                'San Francisco',
+                'San Juan Guarita',
+                'San Manuel Colohete',
+                'San Rafael',
+                'San Sebastián',
+                'Santa Cruz',
+                'Talgua',
+                'Tambla',
+                'Tomalá',
+                'Valladolid',
+                'Virginia',
+                'San Marcos de Caiquín'
             ],
             'Ocotepeque' => [
-                'Nueva Ocotepeque', 'Belén Gualcho', 'Concepción', 'Dolores Merendón', 'Fraternidad', 'La Encarnación', 
-                'La Labor', 'Lucerna', 'Mercedes', 'San Fernando', 'San Francisco del Valle', 'San Jorge', 
-                'San Marcos', 'Santa Fe', 'Sensenti', 'Sinuapa'
+                'Nueva Ocotepeque',
+                'Belén Gualcho',
+                'Concepción',
+                'Dolores Merendón',
+                'Fraternidad',
+                'La Encarnación',
+                'La Labor',
+                'Lucerna',
+                'Mercedes',
+                'San Fernando',
+                'San Francisco del Valle',
+                'San Jorge',
+                'San Marcos',
+                'Santa Fe',
+                'Sensenti',
+                'Sinuapa'
             ],
             'Olancho' => [
-                'Juticalpa', 'Campamento', 'Catacamas', 'Concordia', 'Dulce Nombre de Culmí', 'El Rosario', 
-                'Esquipulas del Norte', 'Gualaco', 'Guarizama', 'Guata', 'Jano', 'La Unión', 'Mangulile', 
-                'Manto', 'Salamá', 'San Esteban', 'San Francisco de Becerra', 'San Francisco de La Paz', 
-                'Santa María del Real', 'Silca', 'Yocón', 'Patuca'
+                'Juticalpa',
+                'Campamento',
+                'Catacamas',
+                'Concordia',
+                'Dulce Nombre de Culmí',
+                'El Rosario',
+                'Esquipulas del Norte',
+                'Gualaco',
+                'Guarizama',
+                'Guata',
+                'Jano',
+                'La Unión',
+                'Mangulile',
+                'Manto',
+                'Salamá',
+                'San Esteban',
+                'San Francisco de Becerra',
+                'San Francisco de La Paz',
+                'Santa María del Real',
+                'Silca',
+                'Yocón',
+                'Patuca'
             ],
             'Santa Bárbara' => [
-                'Santa Bárbara', 'Arada', 'Atima', 'Azacualpa', 'Ceguaca', 'Concepción del Norte', 'Concepción del Sur', 
-                'Chinda', 'El Níspero', 'Gualala', 'Ilama', 'Las Vegas', 'Macuelizo', 'Naranjito', 'Nuevo Celilac', 
-                'Petoa', 'Protección', 'Quimistán', 'San Francisco de Ojuera', 'San José de Colinas', 'San Luis', 
-                'San Marcos', 'San Nicolás', 'San Pedro Zacapa', 'Santa Rita', 'Trinidad'
+                'Santa Bárbara',
+                'Arada',
+                'Atima',
+                'Azacualpa',
+                'Ceguaca',
+                'Concepción del Norte',
+                'Concepción del Sur',
+                'Chinda',
+                'El Níspero',
+                'Gualala',
+                'Ilama',
+                'Las Vegas',
+                'Macuelizo',
+                'Naranjito',
+                'Nuevo Celilac',
+                'Petoa',
+                'Protección',
+                'Quimistán',
+                'San Francisco de Ojuera',
+                'San José de Colinas',
+                'San Luis',
+                'San Marcos',
+                'San Nicolás',
+                'San Pedro Zacapa',
+                'Santa Rita',
+                'Trinidad'
             ],
             'Valle' => [
-                'Nacaome', 'Alianza', 'Amapala', 'Aramecina', 'Caridad', 'Goascorán', 'Langue', 'San Francisco de Coray', 'San Lorenzo'
+                'Nacaome',
+                'Alianza',
+                'Amapala',
+                'Aramecina',
+                'Caridad',
+                'Goascorán',
+                'Langue',
+                'San Francisco de Coray',
+                'San Lorenzo'
             ],
             'Yoro' => [
-                'Yoro', 'Arenal', 'El Negrito', 'El Progreso', 'Jocón', 'Morazán', 'Olanchito', 'Santa Rita', 
-                'Sulaco', 'Victoria', 'Yorito'
+                'Yoro',
+                'Arenal',
+                'El Negrito',
+                'El Progreso',
+                'Jocón',
+                'Morazán',
+                'Olanchito',
+                'Santa Rita',
+                'Sulaco',
+                'Victoria',
+                'Yorito'
             ],
-            
+
         ];
-        
+
 
         return $municipios[$departamento] ?? [];
     }
-    
+
 }

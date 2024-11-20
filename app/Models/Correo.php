@@ -2,15 +2,14 @@
 // app/Models/Correo.php
 namespace App\Models;
 
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Correo extends Model
 {
     use LogsActivity;
-
     protected $table = 'TBL_Correo';
     protected $primaryKey = 'ID_Correo';
     public $timestamps = false;
@@ -20,6 +19,15 @@ class Correo extends Model
         'ID_Empresa',
         'Correo'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($telefono) {
+            activity()->disableLogging();  
+        });
+    }
 
     public function persona(): BelongsTo
     {
@@ -32,8 +40,9 @@ class Correo extends Model
     }
 
     public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
-    
-        ->logAll()
-        ->useLogName('Actividad');
+        ->useLogName(logName: 'Cambio Correo')
+        ->logOnly(['Correo'])
+        ->logOnlyDirty(); 
     }
+    
 }
