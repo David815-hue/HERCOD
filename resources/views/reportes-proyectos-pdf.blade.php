@@ -107,8 +107,10 @@
                 <th>Fecha Firma de Contrato</th>
                 <th>Fecha Orden de Inicio</th>
                 <th>Monto Contractual</th>
+                <th>Monto Anticipo</th>
                 <th>Monto Final</th>
                 <th>Dirección</th>
+                <th>Estado</th>
                 <th>Representante</th>
             </tr>
         </thead>
@@ -121,8 +123,10 @@
                     <td>{{ $proyecto->Fecha_FirmaContrato }}</td>
                     <td>{{ $proyecto->Fecha_OrdenInicio }}</td>
                     <td>{{ number_format($proyecto->Monto_Contractual, 2, '.', ',') }}</td>
+                    <td>{{ number_format($proyecto->Anticipo, 2, '.', ',') }}</td>
                     <td>{{ number_format($proyecto->Monto_Final, 2, '.', ',') }}</td>
                     <td>{{ $proyecto->Direccion }}</td>
+                    <td>{{ $proyecto->Estado }}</td>
                     <td>{{ $proyecto->persona->Nombres }} {{ $proyecto->persona->Apellidos }}</td>
                 </tr>
             @endforeach

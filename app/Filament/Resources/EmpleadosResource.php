@@ -38,6 +38,10 @@ class EmpleadosResource extends Resource
             ->schema([
                 Section::make('Datos Personales')
                     ->schema([
+                        TextInput::make('persona.ID_Persona')
+                        ->label('ID Persona')
+                        ->visible(fn ($livewire) => $livewire instanceof Pages\ViewEmpleados)
+                        ->disabled(),
                         TextInput::make('persona.DNI')
                             ->required()
                             ->label('DNI')
@@ -125,8 +129,9 @@ class EmpleadosResource extends Resource
                             ->currencyMask(thousandSeparator: ',', decimalSeparator: '.', precision: 2)
                             ->numeric(),
 
-                        Forms\Components\DatePicker::make('Fecha_Ingreso')
-                            ->required()
+                            Forms\Components\DatePicker::make('Fecha_Ingreso')
+                             ->required()
+                             ->disabled(fn ($livewire) => $livewire instanceof Pages\EditEmpleados)
 
                     ])->columns(2),
             ]);
@@ -136,6 +141,7 @@ class EmpleadosResource extends Resource
     {
         return $table
             ->columns([
+
                 TextColumn::make('persona.DNI')
                     ->label('DNI')
                     ->toggleable()

@@ -18,5 +18,7 @@ return [
         'mixed' => 'El campo :attribute debe contener al menos una letra mayúscula y una letra minúscula.',
         'symbols' => 'El campo :attribute debe contener al menos un símbolo especial (por ejemplo: !, @, #, ., $).',
     ],
+    'regex' => 'El campo :attribute tiene un formato inválido (Solo letras).',
+    'max_length' => 'El campo :attribute no debe exceder de :max caracteres.', 
 ];
 

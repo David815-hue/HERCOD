@@ -28,6 +28,7 @@ class Empresa extends Model
         'ID_Municipio',
     ];
 
+   
  
     public function telefono()
 {

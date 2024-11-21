@@ -53,7 +53,7 @@ $departamentoTrabajo = DepartamentoTrabajo::firstOrCreate(
     $empleado = Empleados::create([
         'Cargo' => $data['Cargo'],
         'Sueldo' => $data['Sueldo'],
-        'Fecha_Ingreso' => Carbon::now(),
+        'Fecha_Ingreso' => $data['Fecha_Ingreso'],
         'ID_Persona' => $persona->ID_Persona,
         'ID_Departamento_trabajo' => $departamentoTrabajo->ID_Departamento_trabajo,
     ]);

@@ -106,21 +106,46 @@ class ProyectoResource extends Resource
                     ->columns(2)
                     ->schema([
                         Forms\Components\Select::make('ID_Empresa')
-                            ->relationship('empresa', 'Nombre_Empresa')
+                            ->searchable()
+                            ->getSearchResultsUsing(fn(string $search): array =>
+                                \App\Models\Empresa::where('Nombre_Empresa', 'like', "%{$search}%")
+                                    ->limit(50)
+                                    ->pluck('Nombre_Empresa', 'ID_Empresa') // Devuelve el formato ID => Nombre_Empresa
+                                    ->toArray()
+                            )
+                            ->getOptionLabelUsing(fn($value): ?string =>
+                                optional(\App\Models\Empresa::find($value))->Nombre_Empresa // Muestra el nombre de la empresa
+                            )
                             ->label('Empresa')
                             ->required(),
-
-                        Forms\Components\Select::make('Encargado')
+                            
+                            Forms\Components\Select::make('Encargado')
                             ->relationship(
-                                'persona',
-                                'ID_Persona',
+                                'persona',  // Relación
+                                'ID_Persona', // ID que representa la relación
                                 fn($query) => $query
                                     ->select(['ID_Persona', 'Nombres', 'Apellidos'])
                                     ->where('Estado', 'Activo')
                             )
-                            ->getOptionLabelFromRecordUsing(fn($record) => "{$record->Nombres} {$record->Apellidos}")
-                            ->label(label: 'Encargado')
-                            ->required(),
+                            ->getSearchResultsUsing(fn(string $search): array =>
+                                \App\Models\Persona::where('Estado', 'Activo')
+                                    ->where(function($query) use ($search) {
+                                        $query->where('Nombres', 'like', "%{$search}%")
+                                              ->orWhere('Apellidos', 'like', "%{$search}%");
+                                    })
+                                    ->limit(50)
+                                    ->get()
+                                    ->mapWithKeys(fn($persona) => [
+                                        $persona->ID_Persona => "{$persona->Nombres} {$persona->Apellidos}"
+                                    ])
+                                    ->toArray()
+                            )
+                            ->getOptionLabelUsing(fn($value): ?string =>
+                                optional(\App\Models\Persona::find($value))->Nombres . ' ' . optional(\App\Models\Persona::find($value))->Apellidos
+                            )
+                            ->label('Encargado')
+                            ->required()
+                            ->searchable(),
                     ]),
 
                 Forms\Components\Section::make('Montos')
@@ -399,15 +424,31 @@ class ProyectoResource extends Resource
                                 ->required(),
                             Forms\Components\Select::make('Responsable')
                                 ->relationship(
-                                    'persona',
-                                    'ID_Persona',
+                                    'persona',  // Relación
+                                    'ID_Persona', // ID que representa la relación
                                     fn($query) => $query
                                         ->select(['ID_Persona', 'Nombres', 'Apellidos'])
                                         ->where('Estado', 'Activo')
                                 )
-                                ->getOptionLabelFromRecordUsing(fn($record) => "{$record->Nombres} {$record->Apellidos}")
-                                ->label('Responsable')
-                                ->required(),
+                                ->getSearchResultsUsing(fn(string $search): array =>
+                                    \App\Models\Persona::where('Estado', 'Activo')
+                                        ->where(function($query) use ($search) {
+                                            $query->where('Nombres', 'like', "%{$search}%")
+                                                ->orWhere('Apellidos', 'like', "%{$search}%");
+                                        })
+                                        ->limit(50)
+                                        ->get()
+                                        ->mapWithKeys(fn($persona) => [
+                                            $persona->ID_Persona => "{$persona->Nombres} {$persona->Apellidos}"
+                                        ])
+                                        ->toArray()
+                                )
+                                ->getOptionLabelUsing(fn($value): ?string =>
+                                    optional(\App\Models\Persona::find($value))->Nombres . ' ' . optional(\App\Models\Persona::find($value))->Apellidos
+                                )
+                                ->label('Encargado')
+                                ->required()
+                                ->searchable(),
                         ])
                         ->action(function (array $data, $record) {
 

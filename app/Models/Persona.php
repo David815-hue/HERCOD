@@ -27,6 +27,7 @@ class Persona extends Model
 
     ];
 
+
     public function empleado(): HasOne
     {
         return $this->hasOne(Empleados::class, 'ID_Persona', 'ID_Persona');

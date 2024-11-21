@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte de {{ $proyecto->Encargado }} </title>
+    <title>Reporte de {{ $persona->Nombres }} </title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -108,8 +108,10 @@
                 <th>Fecha Firma de Contrato</th>
                 <th>Fecha Orden de Inicio</th>
                 <th>Monto Contractual</th>
+                <th>Monto Anticipo</th>
                 <th>Monto Final</th>
                 <th>Direccion</th>
+                <th>Estado</th>
                 <th>Encargado</th>
             </tr>
         </thead>
@@ -121,15 +123,113 @@
                 <td>{{ $proyecto->Fecha_FirmaContrato }}</td>
                 <td>{{ $proyecto->Fecha_OrdenInicio }}</td>
                 <td>{{ number_format($proyecto->Monto_Contractual, 2, '.', ',') }}</td>
+                <td>{{ number_format($proyecto->Anticipo, 2, '.', ',') }}</td>
                 <td>{{ number_format($proyecto->Monto_Final, 2, '.', ',') }}</td>
                 <td>{{ $proyecto->Direccion }}</td>
+                <td>{{ $proyecto->Estado }}</td>
                 <td>{{ $persona->Nombres }} {{ $persona->Apellidos }}</td>
             </tr>
+            {{-- Verificar si el proyecto tiene tareas --}}
+            <!-- @if ($tareas->isNotEmpty())
+                <tr>
+                    <td colspan="11">
+                        <table style="width: 100%; border: none;">
+                            <thead>
+                            <tr>
+                                <th>Descripción</th>
+                                <th>Fecha Inicio</th>
+                                <th>Fecha Completado</th>
+                                <th>Estado</th>
+                                <th>Creado por</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($tareas as $tarea)
+                                <tr>
+                                    <td>{{ $tarea->Descripcion }}</td>
+                                    <td>{{ $tarea->Fecha_Inicio }}</td>
+                                    <td>{{ $tarea->Fecha_Completado }}</td>
+                                    <td>{{ $tarea->Estado }}</td>
+                                    <td>{{ $tarea->Creado_Por }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            @else
+                <tr>
+                    <td colspan="11" style="text-align: center;">
+                        Este proyecto no tiene tareas.
+                    </td>
+                </tr>
+            @endif -->
+            {{-- Verificar si el proyecto tiene estimaciones --}}
+            @if ($estimaciones->isNotEmpty())
+                        <tr>
+                            <td colspan="11">
+                                <table style="width: 100%; border: none;">
+                                    <thead>
+                                        <tr>
+                                            <th>Descripción</th>
+                                            <th>Fecha creación</th>
+                                            <th>Fecha de Subsanación</th>
+                                            <th>Fecha de Estimación</th>
+                                            <th>Estimación</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($estimaciones as $estimacion)
+                                            <tr>
+                                                <td>{{ $estimacion->Descripcion }}</td>
+                                                <td>{{ $estimacion->Fecha_Creacion }}</td>
+                                                <td>{{ $estimacion->Fecha_Subsanacion }}</td>
+                                                <td>{{ $estimacion->Fecha_Estimacion }}</td>
+                                                <td>{{ number_format($estimacion->Estimacion, 2, '.', ',') }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        {{-- Calcular el total de estimaciones --}}
+                        @php
+                            $totalEstimaciones = $estimaciones->sum('Estimacion');
+                            $anticipo = $proyecto->Anticipo ?? 0;
+                            $montoContractual = $proyecto->Monto_Contractual ?? 0;
+                            $montoFaltante = $montoContractual - $totalEstimaciones - $anticipo;
+                        @endphp
+                        <tr>
+                            <td colspan="11" style="text-align: right; font-weight: bold;">
+                                Total Estimaciones: {{ number_format($totalEstimaciones, 2, '.', ',') }}<br>
+                                Anticipo: {{ number_format($anticipo, 2, '.', ',') }}<br>
+                                Monto Contractual: {{ number_format($montoContractual, 2, '.', ',') }}<br>
+                                Monto Faltante: {{ number_format($montoFaltante, 2, '.', ',') }}
+                            </td>
+                        </tr>
+            @else
+                <tr>
+                    <td colspan="11" style="text-align: center;">
+                        Este proyecto no tiene estimaciones.
+                    </td>
+                </tr>
+            @endif
         </tbody>
     </table>
     <footer>
         Página {PAGE_NUM} de {PAGE_COUNT}
     </footer>
+    <!-- <footer>
+        Página 
+        <script type="text/php">
+            if (isset($pdf)) {
+                $pdf->page_script('
+                    $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
+                    $pdf->text(270, 820, "Página " . $PAGE_NUM . " de " . $PAGE_COUNT, $font, 10);
+                ');
+            }
+        </script> 
+    </footer> -->
 </body>
 
 </html>

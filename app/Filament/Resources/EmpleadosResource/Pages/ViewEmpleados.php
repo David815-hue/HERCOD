@@ -29,6 +29,7 @@ class ViewEmpleados extends ViewRecord
         $empleado = $this->record;
 
         $data['persona'] = [
+            'ID_Persona' => $empleado->persona->ID_Persona,
             'DNI' => $empleado->persona->DNI,
             'Nombres' => $empleado->persona->Nombres,
             'Apellidos' => $empleado->persona->Apellidos,

@@ -43,10 +43,18 @@ class EmpresaResource extends Resource
                 Section::make('Datos Empresariales')
                     ->columns(2)
                     ->schema([
+                        Forms\Components\TextInput::make('ID_Empresa')
+                        ->label('ID Empresa')
+                        ->visible(fn ($livewire) => $livewire instanceof Pages\ViewEmpresa)
+                        ->disabled(),
                         Forms\Components\TextInput::make('RTN')->required()->label('RTN')
                             ->numeric()
                             ->rules(['digits:14']),
                         Forms\Components\TextInput::make('Nombre_Empresa')->required()->label('Nombre de la Empresa'),
+                        Forms\Components\DateTimePicker::make('Fecha_Creacion')
+                        ->required()
+                        ->default(Carbon::now()) 
+                        ->disabled(), 
 
                         Forms\Components\TextInput::make('telefono.Telefono')->label('Teléfono'),  // Nota el cambio aquí
                         Forms\Components\TextInput::make('correo.Correo')->label('Correo'),
@@ -76,6 +84,7 @@ class EmpresaResource extends Resource
     {
         return $table
             ->columns([
+
                 TextColumn::make('RTN')
                     ->label('RTN')
                     ->toggleable()

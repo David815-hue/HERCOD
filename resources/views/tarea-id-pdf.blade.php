@@ -101,11 +101,9 @@
     <table>
         <thead>
             <tr>
-                <th>#</th>
-                <th>Nombre de Proyecto</th>
                 <th>Descripción</th>
-                <th>Fecha de Inicio</th>
-                <th>Fecha de Completado</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Completado</th>
                 <th>Estado</th>
                 <th>Responsable</th>
                 <th>Creado por</th>

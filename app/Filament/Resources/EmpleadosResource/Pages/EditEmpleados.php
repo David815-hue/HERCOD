@@ -75,7 +75,7 @@ class EditEmpleados extends EditRecord
         $record->update([
             'Cargo' => $data['Cargo'],
             'Sueldo' => $data['Sueldo'],
-            'Fecha_Ingreso' => $data['Fecha_Ingreso'] ?? Carbon::now(), 
+        
         ]);
 
         return $record;

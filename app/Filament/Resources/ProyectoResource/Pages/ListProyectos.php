@@ -28,6 +28,9 @@ class ListProyectos extends ListRecords
     public function exportarPDFParaProyecto(Proyecto $proyecto)
     {
         $persona = $proyecto->persona; // Accedo al Modelo Proyecto relacionado...
+        $estimaciones = $proyecto->Estimaciones; // Accedo al Modelo Estimaciones relacionado con ID_Proyecto y ID_Proyecto(ID)
+        $tareas = $proyecto->Tarea; // Accedo al Modelo Tarea relacionado con ID_Proyecto y ID_Proyecto(ID)
+        
         if (!$proyecto) {
             Notification::make()
                 ->title('¡Proyecto no encontrado!')
@@ -37,7 +40,7 @@ class ListProyectos extends ListRecords
         }
 
         $fecha = Carbon::now()->format('d-m-Y');
-        $pdf = PDF::loadView('proyecto-id-pdf', compact('proyecto', 'persona'))->setPaper('a4', 'landscape');
+        $pdf = PDF::loadView('proyecto-id-pdf', compact('proyecto', 'persona','tareas', 'estimaciones'))->setPaper('a4', 'landscape');
         return $pdf->download("Proyecto {$proyecto->Nombre_Proyecto} - {$fecha}.pdf");
     }
 
@@ -78,7 +81,7 @@ class ListProyectos extends ListRecords
     // Método para exportar a PDF
     public function exportarPDF()
     {
-        $proyectos = Proyecto::with(relations: ['persona', 'estimaciones'])->get(); // Relaciono las tablas Persona y Estimaciones con Proyecto...
+        $proyectos = Proyecto::with(relations: ['persona'])->get(); // Relaciono las tablas Persona y Estimaciones con Proyecto...
         
         $fecha = Carbon::now()->format('d-m-Y');
         $pdf = Pdf::loadView('reportes-proyectos-pdf', compact('proyectos'))->setPaper('a4', 'landscape');

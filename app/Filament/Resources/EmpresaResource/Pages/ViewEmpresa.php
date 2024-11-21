@@ -39,7 +39,9 @@ class ViewEmpresa extends ViewRecord
         $correo = $empresa->correo;
         $direcciones = $empresa->direcciones;
         
+        
         $data = [
+            'ID_Empresa' => $empresa->ID_Empresa,
             'RTN' => $empresa->RTN,
             'Nombre_Empresa' => $empresa->Nombre_Empresa,
 
@@ -59,7 +61,6 @@ class ViewEmpresa extends ViewRecord
                 'Tip_Direccion' => $direcciones->Tip_Direccion,
                 'Descripcion' => $direcciones->Descripcion,
             ];
-
             // Agregar datos de municipio si existe
             if ($direcciones->municipio) {
                 $data['direcciones']['municipio'] = [

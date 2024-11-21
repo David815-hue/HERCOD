@@ -30,16 +30,32 @@ class TareaRelationManager extends RelationManager
                     ->required(),
                 Forms\Components\Select::make('Responsable')
                     ->relationship(
-                        'persona',
-                        'ID_Persona',
-                        fn ($query) => $query
+                        'persona',  // Relación
+                        'ID_Persona', // ID que representa la relación
+                        fn($query) => $query
                             ->select(['ID_Persona', 'Nombres', 'Apellidos'])
                             ->where('Estado', 'Activo')
-                        )
-                        ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->Nombres} {$record->Apellidos}")
-                        ->label('Responsable')
-                        ->required(),
-            ]);
+                    )
+                    ->getSearchResultsUsing(fn(string $search): array =>
+                        \App\Models\Persona::where('Estado', 'Activo')
+                            ->where(function($query) use ($search) {
+                                $query->where('Nombres', 'like', "%{$search}%")
+                                    ->orWhere('Apellidos', 'like', "%{$search}%");
+                            })
+                            ->limit(50)
+                            ->get()
+                            ->mapWithKeys(fn($persona) => [
+                                $persona->ID_Persona => "{$persona->Nombres} {$persona->Apellidos}"
+                            ])
+                            ->toArray()
+                    )
+                    ->getOptionLabelUsing(fn($value): ?string =>
+                        optional(\App\Models\Persona::find($value))->Nombres . ' ' . optional(\App\Models\Persona::find($value))->Apellidos
+                    )
+                    ->label('Encargado')
+                    ->required()
+                    ->searchable(),
+                ]);
     }
 
     public function table(Table $table): Table

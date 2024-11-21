@@ -21,13 +21,13 @@ class Proyecto extends Model
     protected $primaryKey = 'ID_Proyecto';
 
     protected $casts = [
-        
+
         'Monto_Final' => 'float',
         'Monto_Contractual' => 'float',
         'Anticipo' => 'float',
     ];
 
-    
+
 
     protected $fillable = [
         'NumeroContrato',
@@ -73,7 +73,7 @@ class Proyecto extends Model
             $proyecto->Estimaciones()->delete();
         });
 
-       
+
     }
 
     public function historialMontos() //Relacion hacia HistorialMonto
@@ -91,15 +91,15 @@ class Proyecto extends Model
         return $this->hasMany(Tarea::class, 'ID_Proyecto', 'ID_Proyecto');
     }
 
-    
+
 
     public function municipio(): BelongsTo
     {
         return $this->belongsTo(Municipio::class, 'ID_Municipio', 'ID_Municipio');
-    } 
+    }
 
 
-        public function persona()
+    public function persona()
     {
         return $this->belongsTo(Persona::class, 'Encargado', 'ID_Persona');
     }
@@ -109,10 +109,14 @@ class Proyecto extends Model
         return $this->hasMany(Empresa::class, 'ID_Empresa', 'ID_Empresa');
     }
 
-    public function getActivitylogOptions(): LogOptions { return LogOptions::defaults() 
-        ->logAll()
-        ->useLogName('Actividad Proyecto')
-        ->logOnlyDirty();
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->useLogName('Actividad Proyecto')
+            ->logOnlyDirty();
     }
-    
+
+
+
 }
