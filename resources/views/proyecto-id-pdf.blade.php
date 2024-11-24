@@ -93,7 +93,7 @@
         <div class="company-info">
             <h1>HERCOD Constructora</h1>
             <p>Distrito Artemisa, El Trapiche, Tegucigalpa, Francisco Morazán, Honduras</p>
-            <p>Teléfono: +504 9237-7721 | Correo: constructorahercod@gmail.com</p>
+            <p>Teléfono: +504 9237-7721 | Correo: constructora_hercod@yahoo.com</p>
         </div>
     </div>
 
@@ -149,7 +149,11 @@
                                     <td>{{ $tarea->Descripcion }}</td>
                                     <td>{{ $tarea->Fecha_Inicio }}</td>
                                     <td>{{ $tarea->Fecha_Completado }}</td>
-                                    <td>{{ $tarea->Estado }}</td>
+                                     @if ($tarea->Estado == 0)
+                                        <td>En Progreso</td>
+                                    @else
+                                        <td>Completado</td>
+                                    @endif
                                     <td>{{ $tarea->Creado_Por }}</td>
                                 </tr>
                                 @endforeach
@@ -166,47 +170,47 @@
             @endif -->
             {{-- Verificar si el proyecto tiene estimaciones --}}
             @if ($estimaciones->isNotEmpty())
-                        <tr>
-                            <td colspan="11">
-                                <table style="width: 100%; border: none;">
-                                    <thead>
-                                        <tr>
-                                            <th>Descripción</th>
-                                            <th>Fecha creación</th>
-                                            <th>Fecha de Subsanación</th>
-                                            <th>Fecha de Estimación</th>
-                                            <th>Estimación</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($estimaciones as $estimacion)
-                                            <tr>
-                                                <td>{{ $estimacion->Descripcion }}</td>
-                                                <td>{{ $estimacion->Fecha_Creacion }}</td>
-                                                <td>{{ $estimacion->Fecha_Subsanacion }}</td>
-                                                <td>{{ $estimacion->Fecha_Estimacion }}</td>
-                                                <td>{{ number_format($estimacion->Estimacion, 2, '.', ',') }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        {{-- Calcular el total de estimaciones --}}
-                        @php
-                            $totalEstimaciones = $estimaciones->sum('Estimacion');
-                            $anticipo = $proyecto->Anticipo ?? 0;
-                            $montoContractual = $proyecto->Monto_Contractual ?? 0;
-                            $montoFaltante = $montoContractual - $totalEstimaciones - $anticipo;
-                        @endphp
-                        <tr>
-                            <td colspan="11" style="text-align: right; font-weight: bold;">
-                                Total Estimaciones: {{ number_format($totalEstimaciones, 2, '.', ',') }}<br>
-                                Anticipo: {{ number_format($anticipo, 2, '.', ',') }}<br>
-                                Monto Contractual: {{ number_format($montoContractual, 2, '.', ',') }}<br>
-                                Monto Faltante: {{ number_format($montoFaltante, 2, '.', ',') }}
-                            </td>
-                        </tr>
+                <tr>
+                    <td colspan="11">
+                        <table style="width: 100%; border: none;">
+                            <thead>
+                                 <tr>
+                                    <th>Descripción</th>
+                                    <th>Fecha creación</th>
+                                    <th>Fecha de Subsanación</th>
+                                    <th>Fecha de Estimación</th>
+                                    <th>Estimación</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($estimaciones as $estimacion)
+                                    <tr>
+                                        <td>{{ $estimacion->Descripcion }}</td>
+                                        <td>{{ $estimacion->Fecha_Creacion }}</td>
+                                        <td>{{ $estimacion->Fecha_Subsanacion }}</td>
+                                        <td>{{ $estimacion->Fecha_Estimacion }}</td>
+                                        <td>{{ number_format($estimacion->Estimacion, 2, '.', ',') }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                {{-- Calcular el total de estimaciones --}}
+                @php
+                    $totalEstimaciones = $estimaciones->sum('Estimacion');
+                    $anticipo = $proyecto->Anticipo ?? 0;
+                    $montoContractual = $proyecto->Monto_Contractual ?? 0;
+                    $montoFaltante = $montoContractual - $totalEstimaciones - $anticipo;
+                @endphp
+                <tr>
+                    <td colspan="11" style="text-align: right; font-weight: bold;">
+                        Total Estimaciones: {{ number_format($totalEstimaciones, 2, '.', ',') }}<br>
+                        Anticipo: {{ number_format($anticipo, 2, '.', ',') }}<br>
+                        Monto Contractual: {{ number_format($montoContractual, 2, '.', ',') }}<br>
+                        Monto Faltante: {{ number_format($montoFaltante, 2, '.', ',') }}
+                    </td>
+                </tr>
             @else
                 <tr>
                     <td colspan="11" style="text-align: center;">

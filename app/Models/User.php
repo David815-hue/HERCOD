@@ -33,6 +33,8 @@ class User extends Authenticatable implements RenewPasswordContract, FilamentUse
         'password',
         'inicio_primera_vez',
         'remember_token',
+        'force_renew_password',
+        'last_renew_password_at',
         'creado_por',
         'fecha_creacion',
     ];
@@ -46,6 +48,8 @@ class User extends Authenticatable implements RenewPasswordContract, FilamentUse
         //'email_verified_at' => 'datetime',
         //'password' => 'hashed',
         //'Inicio_Primera_Vez' => 'boolean',
+        'force_renew_password' => 'boolean',
+        'last_renew_password_at' => 'datetime',
     ];
 
     public function needRenewPassword(): bool

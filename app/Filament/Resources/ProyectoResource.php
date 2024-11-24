@@ -482,20 +482,16 @@ class ProyectoResource extends Resource
                             ->askForFilename() //Nombre manual
                             ->askForWriterType() // Tipos de Formatos automaticos
                             ->withColumns([
-                                Column::make('name')->heading('User name'),
-                                Column::make('email')->heading('Email address'),
-                                Column::make('created_at')->heading('Creation date'),
-                                Column::make('deleted_at')->heading(('Delete date')),
+                                Column::make('Descripcion')->heading('Descripcion'),
+                                Column::make('')->heading(''),                                
                             ]),
 
                         ExcelExport::make('form')->fromForm()
                             ->askForFilename()
                             ->askForWriterType()
                             ->withColumns([
-                                Column::make('name')->heading('User name'),
-                                Column::make('email')->heading('Email address'),
-                                Column::make('created_at')->heading('Creation date'),
-                                Column::make('deleted_at')->heading(('Delete date')),
+                                Column::make('Descripcion')->heading('Descripcion'),
+                                Column::make('')->heading(''),
                             ]),
 
                     ])

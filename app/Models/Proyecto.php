@@ -104,19 +104,55 @@ class Proyecto extends Model
         return $this->belongsTo(Persona::class, 'Encargado', 'ID_Persona');
     }
 
-    public function empresa()
+    public function empresas()
     {
         return $this->hasMany(Empresa::class, 'ID_Empresa', 'ID_Empresa');
     }
 
-    public function getActivitylogOptions(): LogOptions
+    //ACCESOR
+    public function getNombreEncargadoAttribute()
     {
-        return LogOptions::defaults()
-            ->logAll()
-            ->useLogName('Actividad Proyecto')
-            ->logOnlyDirty();
+        $persona = $this->persona; //Usando la relaciOn existente con Persona
+        return $persona ? "{$persona->Nombres} {$persona->Apellidos}" : 'Desconocido';
+    }
+
+    public function getNombresEmpresasAttribute()
+    {
+        $empresas = $this->empresas;
+        if ($empresas->isEmpty()) {
+            return 'Sin empresas asociadas';
+        }
+
+        return $empresas->pluck('Nombre_Empresa')->join(', ');
     }
 
 
+
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'Nombre_Proyecto',
+                'Descripcion',
+                'Anticipo',
+                'Estado',
+                'Fecha_FirmaContrato',
+                'Fecha_OrdenInicio',
+                'Monto_Contractual',
+                'Monto_Final',
+                'Fecha_Fin',
+                'Direccion',
+                'Fecha_Creacion',
+                'NombresEmpresas',
+                'ID_Municipio',
+                'NombreEncargado', 
+                'Creado_Por',
+                'Modificado_Por',
+                'Fecha_Modificacion',
+            ])
+            ->useLogName('Actividad Proyecto')
+            ->logOnlyDirty();
+    }
 
 }

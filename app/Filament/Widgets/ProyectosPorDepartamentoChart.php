@@ -42,6 +42,7 @@ class ProyectosPorDepartamentoChart extends LineChartWidget
         return 500;
     }
 
+    
     protected function getOptions(): array
     {
         return [

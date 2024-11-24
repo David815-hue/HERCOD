@@ -93,7 +93,7 @@
         <div class="company-info">
             <h1>HERCOD Constructora</h1>
             <p>Distrito Artemisa, El Trapiche, Tegucigalpa, Francisco Morazán, Honduras</p>
-            <p>Teléfono: +504 9237-7721 | Correo: constructorahercod@gmail.com</p>
+            <p>Teléfono: +504 9237-7721 | Correo: constructora_hercod@yahoo.com</p>
         </div>
     </div>
 
@@ -105,11 +105,13 @@
                 <th>#</th>
                 <th>Nombre Empleado</th>
                 <th>DNI</th>
+                <th>Telefono</th>
+                <th>Correo</th>
                 <th>Cargo</th>
                 <th>Sueldo</th>
                 <th>Fecha de Ingreso</th>
                 <th>Departamento de Trabajo</th>
-                <th>Creado por</th>
+                <th>Estado</th>
             </tr>
         </thead>
         <tbody>
@@ -117,11 +119,13 @@
                 <td>{{ $empleado->ID_Empleado }}</td>
                 <td>{{ $persona->Nombres }} {{ $persona->Apellidos }}</td>
                 <td>{{ $persona->DNI }}</td>
+                <td>{{ $telefono->Telefono }}</td>
+                <td>{{ $correo->Correo }}</td>
                 <td>{{ $empleado->Cargo }}</td>
                 <td>{{ $empleado->Sueldo }}</td>
                 <td>{{ $empleado->Fecha_Ingreso }}</td>
                 <td>{{ $departamento->Dep_Trabajo }}</td>
-                <td>{{ $empleado->Creado_Por }}</td>
+                <td>{{ $persona->Estado }}</td>
             </tr>
         </tbody>
     </table>

@@ -92,7 +92,7 @@
         <div class="company-info">
             <h1>HERCOD Constructora</h1>
             <p>Distrito Artemisa, El Trapiche, Tegucigalpa, Francisco Morazán, Honduras</p>
-            <p>Teléfono: +504 9237-7721 | Correo: constructorahercod@gmail.com</p>
+            <p>Teléfono: +504 9237-7721 | Correo: constructora_hercod@yahoo.com</p>
         </div>
     </div>
 
@@ -101,6 +101,8 @@
     <table>
         <thead>
             <tr>
+                <th>#</th>
+                <th>Nombre del Proyecto</th>
                 <th>Descripción</th>
                 <th>Fecha Inicio</th>
                 <th>Fecha Completado</th>
@@ -116,7 +118,11 @@
                 <td>{{ $tarea->Descripcion }}</td>
                 <td>{{ $tarea->Fecha_Inicio }}</td>
                 <td>{{ $tarea->Fecha_Completado }}</td>
-                <td>{{ $tarea->Estado }}</td>
+                @if ($tarea->Estado == 0)
+                    <td>En Progreso</td>
+                @else
+                    <td>Completado</td>
+                @endif
                 <td>{{ $persona->Nombres }} {{ $persona->Apellidos }}</td>
                 <td>{{ $tarea->Creado_Por }}</td>
             </tr>

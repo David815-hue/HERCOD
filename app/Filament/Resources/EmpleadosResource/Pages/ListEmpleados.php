@@ -34,8 +34,9 @@ class ListEmpleados extends ListRecords
     {
 
         $persona = $empleado->persona; // Accedo al Modelo Persona relacionado...
-        $departamento = $empleado->departamentoTrabajo; // Accedo al Modelo Persona relacionado...
-
+        $departamento = $empleado->departamentoTrabajo; // Accedo al Modelo DepartamentoTrabajo relacionado...
+        $telefono = $persona->telefono;
+        $correo = $persona->correo;
         if (!$empleado) {
             Notification::make()
                 ->title('Empleado no encontrado')
@@ -44,15 +45,14 @@ class ListEmpleados extends ListRecords
             return;
         }
         $fecha = Carbon::now()->format('d-m-Y');
-        $pdf = PDF::loadView('empleado-id-pdf', compact('empleado', 'persona', 'departamento'))->setPaper('a4', 'landscape');
+        $pdf = PDF::loadView('empleado-id-pdf', compact('empleado', 'persona', 'departamento', 'telefono', 'correo'))->setPaper('a4', 'landscape');
         return $pdf->download("Empleado {$persona->Nombres} {$persona->Apellidos} - {$fecha}.pdf");
     }
 
     // Método para exportar a PDF
     public function exportarPDF()
     {
-        $empleados = Empleados::all();
-        // $empleados = Empleados::with('persona');
+        $empleados = Empleados::with(['persona.telefono'], ['persona.correo'], 'departamentoTrabajo')->get(); // Carga las relaciones correctamente
 
         $fecha = Carbon::now()->format('d-m-Y');
         $pdf = Pdf::loadView('reportes-empleados-pdf', compact('empleados'))->setPaper('a4', 'landscape');

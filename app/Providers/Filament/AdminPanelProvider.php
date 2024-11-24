@@ -28,11 +28,15 @@ use App\Filament\Pages\Backups;
 use App\Filament\Widgets\ProyectosPorDepartamentoChart;
 
 
-
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+
+        $renewPasswordPlugin = new RenewPasswordPlugin();
+        $renewPasswordPlugin->passwordExpiresIn(days: 90);
+        $renewPasswordPlugin->forceRenewPassword();
+
         return $panel
             ->sidebarCollapsibleOnDesktop()
             ->default()
@@ -44,7 +48,8 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(asset('images/favicon2.png'))
             ->darkModeBrandLogo(asset('images/logodark.jpg'))
             ->passwordReset()
-            //->emailVerification()
+            ->emailVerification()
+            
             ->profile()
             ->colors([
                 'primary' => Color::Amber,
@@ -76,9 +81,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 FilamentEditProfilePlugin::make()
-                    ->setIcon('heroicon-o-pencil-square')
-                    ->setNavigationGroup('Administracion')
-                    ->shouldShowDeleteAccountForm(false),
+                ->setIcon('heroicon-o-pencil-square')
+                ->setNavigationGroup('Administracion')
+                ->shouldShowDeleteAccountForm(false),
                 RenewPasswordPlugin::make()
                     ->timestampColumn('inicio_primera_vez'),
                 FilamentBackgroundsPlugin::make()
@@ -91,6 +96,8 @@ class AdminPanelProvider extends PanelProvider
                     ->noTimeout()
                     ->usingPage(Backups::class),
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+
+                $renewPasswordPlugin,
 
                 ActivitylogPlugin::make()
                 ->label('Log')

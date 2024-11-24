@@ -28,8 +28,7 @@ class Backups extends OriginalBackups
       ])
       ->log('Se ha creado un nuevo backup exitosamente.'); 
  
-
-
+      
     // Notificar al usuario
     Notification::make()
       ->title('Backup realizado con éxito')

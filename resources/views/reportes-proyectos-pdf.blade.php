@@ -92,7 +92,7 @@
         <div class="company-info">
             <h1>HERCOD Constructora</h1>
             <p>Distrito Artemisa, El Trapiche, Tegucigalpa, Francisco Morazán, Honduras</p>
-            <p>Teléfono: +504 9237-7721 | Correo: constructorahercod@gmail.com</p>
+            <p>Teléfono: +504 9237-7721 | Correo: constructora_hercod@yahoo.com</p>
         </div>
     </div>
 

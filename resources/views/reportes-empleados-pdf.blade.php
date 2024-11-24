@@ -93,7 +93,7 @@
         <div class="company-info">
             <h1>HERCOD Constructora</h1>
             <p>Distrito Artemisa, El Trapiche, Tegucigalpa, Francisco Morazán, Honduras</p>
-            <p>Teléfono: +504 9237-7721 | Correo: constructorahercod@gmail.com</p>
+            <p>Teléfono: +504 9237-7721 | Correo: constructora_hercod@yahoo.com</p>
         </div>
     </div>
 
@@ -103,27 +103,36 @@
         <thead>
             <tr>
                 <th>#</th>
+                <th>Nombre Empleado</th>
+                <th>DNI</th>
+                <th>Telefono</th>
+                <th>Correo</th>
                 <th>Cargo</th>
                 <th>Sueldo</th>
                 <th>Fecha de Ingreso</th>
                 <th>Departamento de Trabajo</th>
-                <th>Creado por</th>
+                <th>Estado</th>
+                <!-- <th>Creado por</th> -->
             </tr>
         </thead>
         <tbody>
             @foreach ($empleados as $empleado)
             <tr>
                 <td>{{ $empleado->ID_Empleado }}</td>
+                <td>{{ $empleado->persona->Nombres }} {{ $empleado->persona->Apellidos }}</td>
+                <td>{{ $empleado->persona->DNI }}</td>
+                <td>{{ $empleado->persona->telefono->Telefono }}</td>
+                <td>{{ $empleado->persona->correo->Correo }}</td>
                 <td>{{ $empleado->Cargo }}</td>
                 <td>{{ $empleado->Sueldo }}</td>
                 <td>{{ $empleado->Fecha_Ingreso }}</td>
-                <td>{{ $empleado->ID_Departamento_trabajo }}</td>
-                <td>{{ $empleado->Creado_Por }}</td>
+                <td>{{ $empleado->departamentoTrabajo->Dep_Trabajo }}</td>
+                <td>{{ $empleado->persona->Estado }}</td>
+                <!-- <td>{{ $empleado->Creado_Por }}</td> -->
             </tr>
             @endforeach
         </tbody>
     </table>
-
     <footer>
         Página {PAGE_NUM} de {PAGE_COUNT}
     </footer>

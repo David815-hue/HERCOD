@@ -93,7 +93,7 @@
         <div class="company-info">
             <h1>HERCOD Constructora</h1>
             <p>Distrito Artemisa, El Trapiche, Tegucigalpa, Francisco Morazán, Honduras</p>
-            <p>Teléfono: +504 9237-7721 | Correo: constructorahercod@gmail.com</p>
+            <p>Teléfono: +504 9237-7721 | Correo: constructora_hercod@yahoo.com</p>
         </div>
     </div>
 
@@ -113,15 +113,15 @@
         </thead>
         <tbody>
             @foreach ($empresas as $empresa)
-            <tr>
-                <td>{{ $empresa->ID_Empresa }}</td>
-                <td>{{ $empresa->RTN }}</td>
-                <td>{{ $empresa->Nombre_Empresa }}</td>
-                <td>{{ $empresa->Creado_Por }}</td>
-                <td>{{ $empresa->Fecha_Creacion }}</td>
-                <td>{{ $empresa->ID_Departamento }}</td>
-                <td>{{ $empresa->ID_Municipio }}</td>
-            </tr>
+                <tr>
+                    <td>{{ $empresa->ID_Empresa }}</td>
+                    <td>{{ $empresa->RTN }}</td>
+                    <td>{{ $empresa->Nombre_Empresa }}</td>
+                    <td>{{ $empresa->Creado_Por }}</td>
+                    <td>{{ $empresa->Fecha_Creacion }}</td>
+                    <td>{{ $empresa->direcciones?->municipio?->departamento?->Nom_Departamento ?? 'N/A' }}</td>
+                    <td>{{ $empresa->direcciones?->municipio?->Nom_Municipio ?? 'N/A' }}</td>
+                </tr>
             @endforeach
         </tbody>
     </table>
