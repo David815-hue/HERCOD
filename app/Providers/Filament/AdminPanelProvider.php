@@ -47,8 +47,8 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(asset('images/logo.png')) //Habilitar logo
             ->favicon(asset('images/favicon2.png'))
             ->darkModeBrandLogo(asset('images/logodark.jpg'))
-            ->passwordReset()
             ->emailVerification()
+            ->passwordReset()
             
             ->profile()
             ->colors([

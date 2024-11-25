@@ -22,9 +22,10 @@ class Proyecto extends Model
 
     protected $casts = [
 
-        'Monto_Final' => 'float',
+        
         'Monto_Contractual' => 'float',
         'Anticipo' => 'float',
+        'Monto_Final' => 'float',
     ];
 
 

@@ -90,7 +90,6 @@ class User extends Authenticatable implements RenewPasswordContract, FilamentUse
         ->logAll()
         ->useLogName('Actividad Usuario')
         ->logOnlyDirty();
-        
     }
 
     
