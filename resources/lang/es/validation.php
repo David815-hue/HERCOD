@@ -20,6 +20,6 @@ return [
         'symbols' => 'El campo :attribute debe contener al menos un símbolo especial (por ejemplo: !, @, #, ., $).',
     ],
     'regex' => 'El campo :attribute tiene un formato inválido (Solo letras).',
-    'max_length' => 'El campo :attribute no debe exceder de :max caracteres.', 
+    'max_length' => 'El campo :attribute no debe exceder de :max caracteres.',
 ];
 

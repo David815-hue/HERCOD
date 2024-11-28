@@ -25,7 +25,7 @@ return [
     ],
 
     'panel_user' => [
-        'enabled' => true,
+        'enabled' => false,
         'name' => 'panel_user',
     ],
 
@@ -70,11 +70,15 @@ return [
         ],
 
         'widgets' => [
-            'AccountWidget', 'FilamentInfoWidget',
+            'AccountWidget',
+            'FilamentInfoWidget',
         ],
 
-        'resources' => [],
+        'resources' => [
+            'Spatie\Activitylog\Models\Activity',
+        ],
     ],
+
 
     'discovery' => [
         'discover_all_resources' => false,

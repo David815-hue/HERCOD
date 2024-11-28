@@ -49,7 +49,7 @@ class AdminPanelProvider extends PanelProvider
             ->darkModeBrandLogo(asset('images/logodark.jpg'))
             ->emailVerification()
             ->passwordReset()
-            
+
             ->profile()
             ->colors([
                 'primary' => Color::Amber,
@@ -81,16 +81,16 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 FilamentEditProfilePlugin::make()
-                ->setIcon('heroicon-o-pencil-square')
-                ->setNavigationGroup('Administracion')
-                ->shouldShowDeleteAccountForm(false),
+                    ->setIcon('heroicon-o-pencil-square')
+                    ->setNavigationGroup('Administracion')
+                    ->shouldShowDeleteAccountForm(false),
                 RenewPasswordPlugin::make()
                     ->timestampColumn('inicio_primera_vez'),
                 FilamentBackgroundsPlugin::make()
                     ->imageProvider(
                         MyImages::make()
                             ->directory('images/backgrounds')
-                    ), 
+                    ),
                 LightSwitchPlugin::make(),
                 FilamentSpatieLaravelBackupPlugin::make()
                     ->noTimeout()
@@ -100,13 +100,13 @@ class AdminPanelProvider extends PanelProvider
                 $renewPasswordPlugin,
 
                 ActivitylogPlugin::make()
-                ->label('Log')
-                ->pluralLabel('Bitacora')
-                ->navigationItem(true)
-                ->navigationGroup('Seguridad')
-                ->navigationIcon('heroicon-o-document-text')
-                ->navigationCountBadge(true)
-                ->navigationSort(2),
+                    ->label('Log')
+                    ->pluralLabel('Bitacora')
+                    ->navigationItem(true)
+                    ->navigationGroup('Seguridad')
+                    ->navigationIcon('heroicon-o-document-text')
+                    ->navigationCountBadge(true)
+                    ->navigationSort(2),
             ]);
     }
 }

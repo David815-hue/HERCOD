@@ -93,7 +93,6 @@ class Proyecto extends Model
     }
 
 
-
     public function municipio(): BelongsTo
     {
         return $this->belongsTo(Municipio::class, 'ID_Municipio', 'ID_Municipio');
@@ -152,7 +151,7 @@ class Proyecto extends Model
                 'Modificado_Por',
                 'Fecha_Modificacion',
             ])
-            ->useLogName('Actividad Proyecto')
+            ->useLogName(logName: 'Actividad Proyecto')
             ->logOnlyDirty();
     }
 

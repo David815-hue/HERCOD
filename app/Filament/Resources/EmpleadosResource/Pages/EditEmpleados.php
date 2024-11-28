@@ -70,11 +70,16 @@ class EditEmpleados extends EditRecord
         $record->persona->update($data['persona']);
         $record->persona->telefono->update(['Telefono' => $data['persona']['telefono']['Telefono']]);
         $record->persona->correo->update(['Correo' => $data['persona']['correo']['Correo']]);
+
+        $departamentoTrabajo = \App\Models\DepartamentoTrabajo::firstOrCreate(
+            ['Dep_Trabajo' => $data['departamentoTrabajo']['Dep_Trabajo']]
+        );
         
         // Actualizar los campos específicos del empleado
         $record->update([
             'Cargo' => $data['Cargo'],
             'Sueldo' => $data['Sueldo'],
+            'ID_Departamento_trabajo' => $departamentoTrabajo->ID_Departamento_trabajo
         
         ]);
 

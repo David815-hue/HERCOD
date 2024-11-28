@@ -52,12 +52,12 @@ class EmpresaResource extends Resource
                             ->rules(['digits:14']),
                         Forms\Components\TextInput::make('Nombre_Empresa')->required()->label('Nombre de la Empresa'),
                         Forms\Components\DateTimePicker::make('Fecha_Creacion')
-                        ->required()
+                        ->dehydrated(false)
                         ->default(Carbon::now()) 
                         ->disabled(), 
 
-                        Forms\Components\TextInput::make('telefono.Telefono')->label('Teléfono'),  // Nota el cambio aquí
-                        Forms\Components\TextInput::make('correo.Correo')->label('Correo'),
+                        Forms\Components\TextInput::make('telefono.Telefono')->label('Teléfono')->required(),  // Nota el cambio aquí
+                        Forms\Components\TextInput::make('correo.Correo')->label('Correo')->required(),
 
                         Select::make('direcciones.municipio.departamento.Nom_Departamento')
                             ->label('Departamento')
@@ -115,7 +115,9 @@ class EmpresaResource extends Resource
                 DateRangeFilter::make('Fecha_Creacion')
                     ->timezone('UTC')
                     ->minDate(Carbon::now()->subMonth())->maxDate(Carbon::now()->addMonth())
+                    
                     ->alwaysShowCalendar(),
+
             ])
             ->headerActions([
                 Tables\Actions\Action::make('Exportar PDF')
@@ -166,7 +168,6 @@ class EmpresaResource extends Resource
                         ->label('Excel')
                         ->color('success')
                         ->icon('heroicon-o-document-text'),
-                    PrintBulkAction::make(),
                 ]),
             ]);
     }
