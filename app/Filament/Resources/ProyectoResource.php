@@ -64,9 +64,7 @@ class ProyectoResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('NumeroContrato')
                             ->label('Número de Contrato')
-                            ->required()
-                            ->integer()
-                            ->numeric(),
+                            ->required(),
 
                         Forms\Components\TextInput::make('NumeroLicitacion')
                             ->label('Número de Licitación')
@@ -216,7 +214,7 @@ class ProyectoResource extends Resource
                             ->label('Numero de Contrato'),
                         TextEntry::make('NumeroLicitacion')
                             ->label('Numero de Licitacion'),
-                        TextEntry::make('empresa.Nombre_Empresa')
+                        TextEntry::make('empresas.Nombre_Empresa')
                             ->label('Empresa'),
                         TextEntry::make('Descripcion')
                             ->label('Descripcion'),

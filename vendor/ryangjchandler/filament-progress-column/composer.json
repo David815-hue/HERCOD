@@ -1,0 +1,71 @@
+{
+    "name": "ryangjchandler/filament-progress-column",
+    "description": "Add a progress bar column to your Filament tables.",
+    "keywords": [
+        "ryangjchandler",
+        "laravel",
+        "filament-progress-column"
+    ],
+    "homepage": "https://github.com/ryangjchandler/filament-progress-column",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ryan Chandler",
+            "email": "support@ryangjchandler.co.uk",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "filament/filament": "^3.0",
+        "spatie/laravel-package-tools": "^1.9.2",
+        "illuminate/contracts": "^11.0"
+    },
+    "require-dev": {
+        "nunomaduro/collision": "^8.0",
+        "nunomaduro/larastan": "^2.0.1",
+        "orchestra/testbench": "^9.0",
+        "pestphp/pest": "^2.0",
+        "pestphp/pest-plugin-laravel": "^2.0",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan-deprecation-rules": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "phpunit/phpunit": "^10.0",
+        "spatie/laravel-ray": "^1.26"
+    },
+    "autoload": {
+        "psr-4": {
+            "RyanChandler\\FilamentProgressColumn\\": "src",
+            "RyanChandler\\FilamentProgressColumn\\Database\\Factories\\": "database/factories"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "RyanChandler\\FilamentProgressColumn\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest coverage"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "RyanChandler\\FilamentProgressColumn\\FilamentProgressColumnServiceProvider"
+            ],
+            "aliases": {
+                "FilamentProgressColumn": "RyanChandler\\FilamentProgressColumn\\Facades\\FilamentProgressColumn"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

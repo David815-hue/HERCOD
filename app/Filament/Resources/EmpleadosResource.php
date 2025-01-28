@@ -48,7 +48,7 @@ class EmpleadosResource extends Resource
                             ->numeric()
                             ->minLength(13)
                             ->maxLength(13)
-                            ->rules(['digits:13']),
+                            ->rules(rules: ['digits:13']),
 
                         TextInput::make('persona.Nombres')
                             ->required()
